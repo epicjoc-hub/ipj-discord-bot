@@ -16,5 +16,5 @@ module.exports = {
     "COMISAR",
     "COMISAR-SEF"
   ],
-  SITE_URL: process.env.SITE_URL || "http://localhost:3000"
+  SITE_URL: process.env.SITE_URL || "https://ipj-ls-pr-bzone.vercel.app"
 };
