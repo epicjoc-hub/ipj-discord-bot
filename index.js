@@ -26,13 +26,16 @@ client.once('ready', async () => {
 
   try {
     console.log('Înregistrare comenzi slash...');
-    await rest.put(
+    console.log('GUILD_ID:', config.GUILD_ID);
+    console.log('Comenzi de înregistrat:', JSON.stringify(commands));
+    const result = await rest.put(
       Routes.guildCommands(config.GUILD_ID),
       { body: commands }
     );
-    console.log('Comenzi slash înregistrate cu succes!');
+    console.log('Comenzi slash înregistrate cu succes!', JSON.stringify(result));
   } catch (error) {
     console.error('Eroare la înregistrarea comenzilor:', error);
+    if (error?.stack) console.error(error.stack);
   }
 });
 
