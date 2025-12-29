@@ -33,7 +33,7 @@ async function handleSeteaza(interaction) {
     .setCustomId('grad_input')
     .setLabel('Grad')
     .setStyle(TextInputStyle.Short)
-    .setPlaceholder(`Grade disponibile: ${config.GRADES.join(', ')}`)
+    .setPlaceholder('Ex: AGENT')
     .setRequired(true)
     .setMinLength(2)
     .setMaxLength(50);
@@ -127,7 +127,7 @@ async function handleActualizeazaGrad(interaction) {
     .setCustomId('grad_input_update')
     .setLabel('Grad nou')
     .setStyle(TextInputStyle.Short)
-    .setPlaceholder(`Grade disponibile: ${config.GRADES.join(', ')}`)
+    .setPlaceholder('Ex: AGENT')
     .setValue(user.grad)
     .setRequired(true)
     .setMinLength(2)
