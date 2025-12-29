@@ -29,7 +29,7 @@ client.once('ready', async () => {
     console.log('GUILD_ID:', config.GUILD_ID);
     console.log('Comenzi de înregistrat:', JSON.stringify(commands));
     const result = await rest.put(
-      Routes.guildCommands(config.GUILD_ID),
+      Routes.applicationGuildCommands(client.user.id, config.GUILD_ID),
       { body: commands }
     );
     console.log('Comenzi slash înregistrate cu succes!', JSON.stringify(result));
