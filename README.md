@@ -2,14 +2,26 @@
 
 Bot Discord pentru gestionarea panel-ului și autentificării admin pentru site-ul IPJ Los Santos.
 
-> **Lucru împreună cu site-ul?** Vezi [LOCAL-DEV-SETUP.md](LOCAL-DEV-SETUP.md) pentru a rula bot + site local cu Docker Compose.
+> **⚠️ Monorepo Structure** — Bot și Site sunt în același repo: `bot/` și `site/`  
+> Pentru development local: [LOCAL-DEV-SETUP.md](LOCAL-DEV-SETUP.md)  
+> Pentru deploy pe Render: [RENDER-DEPLOY.md](RENDER-DEPLOY.md)
 
-## 🚀 Setup Rapid
+## 📁 Structură
+
+```
+ipj-discord-bot/     (monorepo)
+├── bot/             ← Discord Bot (Node.js + Express)
+├── site/            ← Web Admin Panel (Next.js, submodule)
+├── docker-compose.yml
+└── setup-local-dev.sh
+```
+
+## 🚀 Setup Rapid (Bot Standalone)
 
 1. **Clonează repository-ul:**
    ```bash
-   git clone https://github.com/epicjoc-hub/ipj-discord-bot.git
-   cd ipj-discord-bot
+   git clone --recurse-submodules https://github.com/epicjoc-hub/ipj-discord-bot.git
+   cd ipj-discord-bot/bot
    ```
 
 2. **Instalează dependencies:**
@@ -18,9 +30,9 @@ Bot Discord pentru gestionarea panel-ului și autentificării admin pentru site-
    ```
 
 3. **Creează fișier `.env`:**
-   ```env
-   BOT_TOKEN=your_bot_token_here
-   SITE_URL=http://localhost:3000
+   ```bash
+   cp .env.example .env
+   # Edit .env și adaugă BOT_TOKEN
    ```
 
 4. **Pornește bot-ul:**
@@ -94,18 +106,16 @@ Bot-ul comunică cu site-ul Next.js prin:
 
 ## 🌐 Hosting 24/7
 
-Vezi `HOSTING-24-7.md` pentru instrucțiuni despre cum să rulezi bot-ul 24/7 pe:
-- Railway.app
-- Render.com
-- VPS cu PM2
-- Alte servicii
+Bot-ul poate fi deploy-at pe Render, Railway, VPS, etc.
+
+**Render (Recommended):** Vezi [RENDER-DEPLOY.md](RENDER-DEPLOY.md) — structura monorepo cu `cd bot && npm install`
 
 ## 📖 Ghiduri
 
-- `CUM-ADAUGA-BOT.md` - Cum să adaugi bot-ul pe serverul Discord
-- `HOSTING-24-7.md` - Cum să rulezi bot-ul 24/7
-- `HOSTING-RENDER.md` - Deploy pe Render cu `/verify` endpoint și VERIFY_SECRET
-- `LOCAL-DEV-SETUP.md` - Ruleaza local cu site-ul folosind Docker Compose
+- [MONOREPO.md](MONOREPO.md) - Overview structurii bot + site
+- [LOCAL-DEV-SETUP.md](LOCAL-DEV-SETUP.md) - Ruleaza local cu Docker Compose (bot + site)
+- [RENDER-DEPLOY.md](RENDER-DEPLOY.md) - Deploy bot pe Render (monorepo)
+- `bot/HOSTING-RENDER.md` - Details despre `/verify` endpoint și VERIFY_SECRET
 
 ## 🔗 Repository-uri Conexe
 
