@@ -1,6 +1,5 @@
 {
-  "root": "site",
-  "buildCommand": "npm install && npm run build",
+  "buildCommand": "cd site && npm install && npm run build",
   "outputDirectory": "site/.next",
   "env": {
     "VERIFY_SECRET": "@verify_secret",
