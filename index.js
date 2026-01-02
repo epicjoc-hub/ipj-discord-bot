@@ -53,3 +53,43 @@ client.on('interactionCreate', async (interaction) => {
 });
 
 client.login(config.BOT_TOKEN);
+
+// --- Minimal HTTP endpoint for token verification (used by the site)
+const express = require('express');
+const storage = require('./utils/storage');
+
+const app = express();
+app.use(express.json());
+
+// Basic health check
+app.get('/health', (req, res) => {
+  return res.json({ ok: true, bot: client.user ? client.user.tag : null });
+});
+
+// Verify token: site can call this server-side to confirm a token and receive the discordId
+// Example: GET /verify?token=abcdef
+app.get('/verify', (req, res) => {
+  // Verify secret header to prevent public abuse
+  const expectedSecret = process.env.VERIFY_SECRET;
+  if (!expectedSecret) {
+    return res.status(500).json({ ok: false, error: 'server_misconfigured' });
+  }
+
+  const providedSecret = req.header('x-verify-secret');
+  if (!providedSecret || providedSecret !== expectedSecret) {
+    return res.status(403).json({ ok: false, error: 'forbidden' });
+  }
+
+  const token = req.query.token;
+  if (!token) return res.status(400).json({ ok: false, error: 'no_token' });
+
+  const discordId = storage.verifyToken(token);
+  if (!discordId) return res.status(401).json({ ok: false, error: 'invalid_or_expired' });
+
+  return res.json({ ok: true, discordId });
+});
+
+const port = process.env.PORT || 3000;
+app.listen(port, () => {
+  console.log(`HTTP server listening on port ${port}`);
+});

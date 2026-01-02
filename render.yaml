@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: ipj-discord-bot
+    env: node
+    branch: main
+    buildCommand: npm install
+    startCommand: npm start
+    autoDeploy: true
+    envVars:
+      - key: BOT_TOKEN
+      - key: SITE_URL
+      - key: PORT
+      - key: VERIFY_SECRET
