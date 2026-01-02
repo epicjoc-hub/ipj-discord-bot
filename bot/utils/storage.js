@@ -5,6 +5,7 @@ const USERS_FILE = path.join(__dirname, '../data/discord-users.json');
 const TOKENS_FILE = path.join(__dirname, '../data/discord-tokens.json');
 const CERERI_FILE = path.join(__dirname, '../data/cereri-evenimente.json');
 const PROGRAMARI_FILE = path.join(__dirname, '../data/programari-teste.json');
+const ANUNTURI_FILE = path.join(__dirname, '../data/anunturi-evenimente.json');
 
 // Ensure data directory exists
 const dataDir = path.join(__dirname, '../data');
@@ -26,7 +27,11 @@ if (!fs.existsSync(CERERI_FILE)) {
 }
 
 if (!fs.existsSync(PROGRAMARI_FILE)) {
-  fs.writeFileSync(PROGRAMARI_FILE, JSON.stringify([], null, 2));
+ 
+
+if (!fs.existsSync(ANUNTURI_FILE)) {
+  fs.writeFileSync(ANUNTURI_FILE, JSON.stringify([], null, 2));
+} fs.writeFileSync(PROGRAMARI_FILE, JSON.stringify([], null, 2));
 }
 
 function readUsers() {
@@ -234,6 +239,55 @@ function updateProgramare(id, updates) {
   return programari[index];
 }
 
+// Anunturi Evenimente
+function readAnunturi() {
+  try {
+    const data = fs.readFileSync(ANUNTURI_FILE, 'utf8');
+    return JSON.parse(data);
+  } catch (error) {
+    console.error('Error reading anunturi file:', error);
+    return [];
+  }
+}
+
+function writeAnunturi(anunturi) {
+  try {
+    fs.writeFileSync(ANUNTURI_FILE, JSON.stringify(anunturi, null, 2));
+    return true;
+  } catch (error) {
+    console.error('Error writing anunturi file:', error);
+    return false;
+  }
+}
+
+function addAnunt(anunt) {
+  const anunturi = readAnunturi();
+  const newAnunt = {
+    id: Date.now().toString(),
+    ...anunt,
+    status: 'aprobat',
+  };
+  anunturi.push(newAnunt);
+  writeAnunturi(anunturi);
+  return newAnunt;
+}
+
+function updateAnunt(id, updates) {
+  const anunturi = readAnunturi();
+  const index = anunturi.findIndex(a => a.id === id);
+  if (index === -1) return null;
+  anunturi[index] = { ...anunturi[index], ...updates };
+  writeAnunturi(anunturi);
+  return anunturi[index];
+}
+
+function deleteAnunt(id) {
+  const anunturi = readAnunturi();
+  const filtered = anunturi.filter(a => a.id !== id);
+  writeAnunturi(filtered);
+  return filtered.length < anunturi.length;
+}
+
 module.exports = {
   getUserByDiscordId,
   saveUser,
@@ -250,5 +304,10 @@ module.exports = {
   writeProgramari,
   addProgramare,
   updateProgramare,
+  readAnunturi,
+  writeAnunturi,
+  addAnunt,
+  updateAnunt,
+  deleteAnunt,
 };
 

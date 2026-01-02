@@ -176,6 +176,45 @@ app.put('/programari-teste/:id', (req, res) => {
   return res.json({ success: true, programare });
 });
 
+// Anunturi Evenimente endpoints
+app.get('/anunturi-evenimente', (req, res) => {
+  const expectedSecret = process.env.VERIFY_SECRET;
+  if (!expectedSecret || req.header('x-verify-secret') !== expectedSecret) {
+    return res.status(403).json({ ok: false, error: 'forbidden' });
+  }
+  const anunturi = storage.readAnunturi();
+  return res.json(anunturi);
+});
+
+app.post('/anunturi-evenimente', (req, res) => {
+  const expectedSecret = process.env.VERIFY_SECRET;
+  if (!expectedSecret || req.header('x-verify-secret') !== expectedSecret) {
+    return res.status(403).json({ ok: false, error: 'forbidden' });
+  }
+  const anunt = storage.addAnunt(req.body);
+  return res.json({ success: true, anunt });
+});
+
+app.put('/anunturi-evenimente/:id', (req, res) => {
+  const expectedSecret = process.env.VERIFY_SECRET;
+  if (!expectedSecret || req.header('x-verify-secret') !== expectedSecret) {
+    return res.status(403).json({ ok: false, error: 'forbidden' });
+  }
+  const anunt = storage.updateAnunt(req.params.id, req.body);
+  if (!anunt) return res.status(404).json({ ok: false, error: 'not_found' });
+  return res.json({ success: true, anunt });
+});
+
+app.delete('/anunturi-evenimente/:id', (req, res) => {
+  const expectedSecret = process.env.VERIFY_SECRET;
+  if (!expectedSecret || req.header('x-verify-secret') !== expectedSecret) {
+    return res.status(403).json({ ok: false, error: 'forbidden' });
+  }
+  const success = storage.deleteAnunt(req.params.id);
+  if (!success) return res.status(404).json({ ok: false, error: 'not_found' });
+  return res.json({ success: true });
+});
+
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
   console.log(`HTTP server listening on port ${port}`);

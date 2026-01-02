@@ -215,6 +215,68 @@ export default function AdminCereriEvenimente() {
                     ))}
                   </div>
                 )}
+                {cerere.status !== 'pending' && cerere.istoric && cerere.istoric.length > 0 && (
+                  <div className="mt-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                    <div className="flex justify-between items-center mb-2">
+                      <h4 className="font-semibold text-[var(--text-primary)]">📧 Model E-mail</h4>
+                      <button
+                        onClick={() => {
+                          const istoric = cerere.istoric[cerere.istoric.length - 1];
+                          const email = `${cerere.nume.toLowerCase()}.${cerere.prenume.toLowerCase()}@bzone.ro`;
+                          const data = new Date().toLocaleDateString('ro-RO');
+                          const subiect = cerere.status === 'approved' ? 'APROBARE' : 'RESPINGERE';
+                          const emailContent = `📧 MODEL E-MAIL
+
+📤 Expeditor: relatiipublice@ipjbz.ro
+📅 Data: ${data}
+📎 Către: ${email}
+📌 Subiect: ${subiect} CERERE EVENIMENT
+
+-------------------------------------------------------------
+
+Mesaj:
+
+${istoric.mesaj || (cerere.status === 'approved' ? 'Cererea dvs. pentru eveniment a fost aprobată.' : 'Cererea dvs. pentru eveniment a fost respinsă.')}
+
+-------------------------------------------------------------
+
+Cu stimă,
+${istoric.admin.grad} ${istoric.admin.nume}
+Biroul Relații Publice
+
+🔁 Răspunde | ➡️ Redirecționează`;
+                          navigator.clipboard.writeText(emailContent);
+                          alert('Email copiat în clipboard!');
+                        }}
+                        className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 font-semibold text-sm"
+                      >
+                        📋 Copiază Email
+                      </button>
+                    </div>
+                    <pre className="text-xs bg-white dark:bg-gray-900 p-3 rounded border border-gray-200 dark:border-gray-700 overflow-x-auto whitespace-pre-wrap">
+{`📧 MODEL E-MAIL
+
+📤 Expeditor: relatiipublice@ipjbz.ro
+📅 Data: ${new Date().toLocaleDateString('ro-RO')}
+📎 Către: ${cerere.nume.toLowerCase()}.${cerere.prenume.toLowerCase()}@bzone.ro
+📌 Subiect: ${cerere.status === 'approved' ? 'APROBARE' : 'RESPINGERE'} CERERE EVENIMENT
+
+-------------------------------------------------------------
+
+Mesaj:
+
+${cerere.istoric[cerere.istoric.length - 1]?.mesaj || (cerere.status === 'approved' ? 'Cererea dvs. pentru eveniment a fost aprobată.' : 'Cererea dvs. pentru eveniment a fost respinsă.')}
+
+-------------------------------------------------------------
+
+Cu stimă,
+${cerere.istoric[cerere.istoric.length - 1]?.admin?.grad} ${cerere.istoric[cerere.istoric.length - 1]?.admin?.nume}
+Biroul Relații Publice
+
+🔁 Răspunde | ➡️ Redirecționează`}
+                    </pre>
+                  </div>
+                )}
               </motion.div>
             ))}
           </div>

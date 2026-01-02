@@ -189,6 +189,75 @@ export default function AdminProgramariTeste() {
                     Programat
                   </span>
                 </div>
+                <div className="mt-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                  <div className="flex justify-between items-center mb-2">
+                    <h4 className="font-semibold text-[var(--text-primary)]">📧 Model E-mail</h4>
+                    <button
+                      onClick={() => {
+                        const email = `${programare.nume.toLowerCase()}.${programare.prenume.toLowerCase()}@bzone.ro`;
+                        const data = new Date().toLocaleDateString('ro-RO');
+                        const dataTest = new Date(programare.dataTest).toLocaleDateString('ro-RO');
+                        const emailContent = `📧 MODEL E-MAIL
+
+📤 Expeditor: relatiipublice@ipjbz.ro
+📅 Data: ${data}
+📎 Către: ${email}
+📌 Subiect: PROGRAMARE TEST ${programare.tipTest}
+
+-------------------------------------------------------------
+
+Mesaj:
+
+Testarea dvs. pentru ${programare.tipTest} a fost programată pentru:
+📅 Data: ${dataTest}
+🕐 Ora: ${programare.oraTest}
+📞 Contact: ${programare.telefon}
+
+Vă rugăm să vă prezentați la timp.
+
+-------------------------------------------------------------
+
+Cu stimă,
+${programare.grad} ${programare.nume}
+Biroul Relații Publice
+
+🔁 Răspunde | ➡️ Redirecționează`;
+                        navigator.clipboard.writeText(emailContent);
+                        alert('Email copiat în clipboard!');
+                      }}
+                      className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 font-semibold text-sm"
+                    >
+                      📋 Copiază Email
+                    </button>
+                  </div>
+                  <pre className="text-xs bg-white dark:bg-gray-900 p-3 rounded border border-gray-200 dark:border-gray-700 overflow-x-auto whitespace-pre-wrap">
+{`📧 MODEL E-MAIL
+
+📤 Expeditor: relatiipublice@ipjbz.ro
+📅 Data: ${new Date().toLocaleDateString('ro-RO')}
+📎 Către: ${programare.nume.toLowerCase()}.${programare.prenume.toLowerCase()}@bzone.ro
+📌 Subiect: PROGRAMARE TEST ${programare.tipTest}
+
+-------------------------------------------------------------
+
+Mesaj:
+
+Testarea dvs. pentru ${programare.tipTest} a fost programată pentru:
+📅 Data: ${new Date(programare.dataTest).toLocaleDateString('ro-RO')}
+🕐 Ora: ${programare.oraTest}
+📞 Contact: ${programare.telefon}
+
+Vă rugăm să vă prezentați la timp.
+
+-------------------------------------------------------------
+
+Cu stimă,
+${programare.grad} ${programare.nume}
+Biroul Relații Publice
+
+🔁 Răspunde | ➡️ Redirecționează`}
+                  </pre>
+                </div>
               </motion.div>
             ))}
           </div>

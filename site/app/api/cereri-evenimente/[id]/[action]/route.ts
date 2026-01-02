@@ -69,6 +69,33 @@ export async function POST(
       return NextResponse.json({ error: 'Eroare la actualizarea cererii' }, { status: 500 });
     }
 
+    // If approved, create anunt automatically
+    if (action === 'aprobare') {
+      try {
+        const anuntData = {
+          titlu: cerere.tipEveniment === 'Altul' ? (cerere.tipCustom || cerere.tipEveniment) : cerere.tipEveniment,
+          data: cerere.data,
+          ora: cerere.ora,
+          locatie: 'Los Santos',
+          descriere: cerere.descriere,
+          status: 'aprobat',
+          imagine: '/images/events/default.jpg',
+        };
+
+        await fetch(`${botApiUrl}/anunturi-evenimente`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-verify-secret': verifySecret,
+          },
+          body: JSON.stringify(anuntData),
+        });
+      } catch (error) {
+        console.error('Error creating anunt:', error);
+        // Continue even if anunt creation fails
+      }
+    }
+
     // Generate email for Discord
     const emailContent = generateEmailContent(cerere, newStatus, mesaj, adminUser);
 
