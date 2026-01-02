@@ -186,13 +186,13 @@ export default function GhiduriPage() {
                     </div>
 
                     {submitStatus === 'success' && (
-                      <div className="bg-green-100 dark:bg-green-900 border border-green-400 text-green-700 dark:text-green-200 px-4 py-3 rounded-lg">
+                      <div className="bg-[var(--primary)]/15 border border-[var(--glass-border)] text-[var(--text-primary)] px-4 py-3 rounded-[var(--radius-md)]">
                         Cererea a fost trimisă! Veți fi contactat pentru programare.
                       </div>
                     )}
 
                     {submitStatus === 'error' && (
-                      <div className="bg-red-100 dark:bg-red-900 border border-red-400 text-red-700 dark:text-red-200 px-4 py-3 rounded-lg">
+                      <div className="bg-[var(--accent)]/12 border border-[var(--glass-border)] text-[var(--text-primary)] px-4 py-3 rounded-[var(--radius-md)]">
                         Eroare la trimitere. Încercați din nou.
                       </div>
                     )}

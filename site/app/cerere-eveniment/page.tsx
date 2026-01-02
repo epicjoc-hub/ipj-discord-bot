@@ -116,7 +116,7 @@ export default function CerereEvenimentPage() {
                   className="w-full px-4 py-3 border border-[var(--glass-border)] rounded-lg bg-[var(--glass-bg)] backdrop-filter backdrop-blur-sm text-[var(--text-primary)] focus:border-[var(--primary)] focus:outline-none transition-colors"
                 />
                 {errors.nume && (
-                  <p className="mt-1 text-sm text-red-600">{errors.nume.message}</p>
+                  <p className="mt-1 text-sm text-[var(--accent)]">{errors.nume.message}</p>
                 )}
               </div>
 
@@ -130,7 +130,7 @@ export default function CerereEvenimentPage() {
                   className="w-full px-4 py-3 border border-[var(--glass-border)] rounded-lg bg-[var(--glass-bg)] backdrop-filter backdrop-blur-sm text-[var(--text-primary)] focus:border-[var(--primary)] focus:outline-none transition-colors"
                 />
                 {errors.prenume && (
-                  <p className="mt-1 text-sm text-red-600">{errors.prenume.message}</p>
+                  <p className="mt-1 text-sm text-[var(--accent)]">{errors.prenume.message}</p>
                 )}
               </div>
 
@@ -145,7 +145,7 @@ export default function CerereEvenimentPage() {
                   className="w-full px-4 py-3 border border-[var(--glass-border)] rounded-lg bg-[var(--glass-bg)] backdrop-filter backdrop-blur-sm text-[var(--text-primary)] focus:border-[var(--primary)] focus:outline-none transition-colors"
                 />
                 {errors.telefon && (
-                  <p className="mt-1 text-sm text-red-600">{errors.telefon.message}</p>
+                  <p className="mt-1 text-sm text-[var(--accent)]">{errors.telefon.message}</p>
                 )}
               </div>
 
@@ -160,7 +160,7 @@ export default function CerereEvenimentPage() {
                   className="w-full px-4 py-3 border border-[var(--glass-border)] rounded-lg bg-[var(--glass-bg)] backdrop-filter backdrop-blur-sm text-[var(--text-primary)] focus:border-[var(--primary)] focus:outline-none transition-colors"
                 />
                 {errors.discordTag && (
-                  <p className="mt-1 text-sm text-red-600">{errors.discordTag.message}</p>
+                  <p className="mt-1 text-sm text-[var(--accent)]">{errors.discordTag.message}</p>
                 )}
               </div>
             </div>
@@ -188,7 +188,7 @@ export default function CerereEvenimentPage() {
                   <option value="Altul">Altul</option>
                 </select>
                 {errors.tipEveniment && (
-                  <p className="mt-1 text-sm text-red-600">{errors.tipEveniment.message}</p>
+                  <p className="mt-1 text-sm text-[var(--accent)]">{errors.tipEveniment.message}</p>
                 )}
               </div>
 
@@ -219,7 +219,7 @@ export default function CerereEvenimentPage() {
                     className="w-full px-4 py-3 border border-[var(--glass-border)] rounded-lg bg-[var(--glass-bg)] backdrop-filter backdrop-blur-sm text-[var(--text-primary)] focus:border-[var(--primary)] focus:outline-none transition-colors"
                   />
                   {errors.data && (
-                    <p className="mt-1 text-sm text-red-600">{errors.data.message}</p>
+                    <p className="mt-1 text-sm text-[var(--accent)]">{errors.data.message}</p>
                   )}
                 </div>
 
@@ -233,7 +233,7 @@ export default function CerereEvenimentPage() {
                     className="w-full px-4 py-3 border border-[var(--glass-border)] rounded-lg bg-[var(--glass-bg)] backdrop-filter backdrop-blur-sm text-[var(--text-primary)] focus:border-[var(--primary)] focus:outline-none transition-colors"
                   />
                   {errors.ora && (
-                    <p className="mt-1 text-sm text-red-600">{errors.ora.message}</p>
+                    <p className="mt-1 text-sm text-[var(--accent)]">{errors.ora.message}</p>
                   )}
                 </div>
               </div>
@@ -249,7 +249,7 @@ export default function CerereEvenimentPage() {
                   className="w-full px-4 py-3 border border-[var(--glass-border)] rounded-lg bg-[var(--glass-bg)] backdrop-filter backdrop-blur-sm text-[var(--text-primary)] focus:border-[var(--primary)] focus:outline-none transition-colors"
                 />
                 {errors.numarParticipanti && (
-                  <p className="mt-1 text-sm text-red-600">
+                  <p className="mt-1 text-sm text-[var(--accent)]">
                     {errors.numarParticipanti.message}
                   </p>
                 )}
@@ -290,7 +290,7 @@ export default function CerereEvenimentPage() {
                   placeholder="Descrie evenimentul în detaliu..."
                 />
                 {errors.descriere && (
-                  <p className="mt-1 text-sm text-red-600">{errors.descriere.message}</p>
+                  <p className="mt-1 text-sm text-[var(--accent)]">{errors.descriere.message}</p>
                 )}
               </div>
             </div>
@@ -301,7 +301,7 @@ export default function CerereEvenimentPage() {
             <motion.div
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="bg-green-100 dark:bg-green-900 border border-green-400 dark:border-green-600 text-green-700 dark:text-green-200 px-4 py-3 rounded-lg"
+              className="bg-[var(--primary)]/15 border border-[var(--glass-border)] text-[var(--text-primary)] px-4 py-3 rounded-[var(--radius-md)]"
             >
               Cererea a fost trimisă cu succes! Veți fi contactat în cel mai scurt timp.
             </motion.div>
@@ -311,7 +311,7 @@ export default function CerereEvenimentPage() {
             <motion.div
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="bg-red-100 dark:bg-red-900 border border-red-400 dark:border-red-600 text-red-700 dark:text-red-200 px-4 py-3 rounded-lg"
+              className="bg-[var(--accent)]/12 border border-[var(--glass-border)] text-[var(--text-primary)] px-4 py-3 rounded-[var(--radius-md)]"
             >
               A apărut o eroare la trimiterea cererii. Vă rugăm să încercați din nou.
             </motion.div>

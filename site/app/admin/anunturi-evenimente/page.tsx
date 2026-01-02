@@ -50,15 +50,16 @@ export default function AdminAnunturiEvenimente() {
 
   return (
     <div className="min-h-screen bg-[var(--background)]">
-      <header className="bg-[var(--primary)] text-white shadow-lg">
+      <header className="glass-navbar sticky top-0 z-40">
         <div className="container mx-auto px-4 py-4">
           <div className="flex justify-between items-center">
             <div>
-              <h1 className="text-2xl font-bold">Gestionare Anunțuri Evenimente</h1>
+              <h1 className="text-2xl font-bold text-[var(--text-primary)]">Gestionare Anunțuri Evenimente</h1>
+              <p className="text-sm text-[var(--text-secondary)]">Administrare anunțuri (dark-only)</p>
             </div>
             <Link
               href="/admin/dashboard"
-              className="bg-[var(--accent)] text-[var(--primary)] px-4 py-2 rounded-lg font-semibold hover:bg-[var(--accent-hover)] transition-colors"
+              className="glass-card px-4 py-2 rounded-[var(--radius-md)] font-semibold hover:bg-[var(--glass-bg-hover)] transition-colors"
             >
               ← Dashboard
             </Link>
@@ -71,7 +72,7 @@ export default function AdminAnunturiEvenimente() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-[var(--card-bg)] rounded-xl shadow-md p-6 mb-6 border border-[var(--border)]"
+            className="glass-card p-6 mb-6"
           >
             <h2 className="text-2xl font-bold mb-4 text-[var(--text-primary)]">Editează Anunț</h2>
             <div className="space-y-4">
@@ -84,7 +85,7 @@ export default function AdminAnunturiEvenimente() {
                     <textarea
                       value={formData[field] || ''}
                       onChange={(e) => setFormData({ ...formData, [field]: e.target.value })}
-                      className="w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--text-primary)]"
+                      className="w-full px-4 py-2 rounded-[var(--radius-md)]"
                       rows={5}
                     />
                   ) : (
@@ -92,7 +93,7 @@ export default function AdminAnunturiEvenimente() {
                       type={field === 'data' ? 'date' : field === 'ora' ? 'time' : 'text'}
                       value={formData[field] || ''}
                       onChange={(e) => setFormData({ ...formData, [field]: e.target.value })}
-                      className="w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--background)] text-[var(--text-primary)]"
+                      className="w-full px-4 py-2 rounded-[var(--radius-md)]"
                     />
                   )}
                 </div>
@@ -132,7 +133,7 @@ export default function AdminAnunturiEvenimente() {
                   status: 'aprobat',
                 });
               }}
-              className="bg-green-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-green-700"
+              className="bg-[var(--primary)] text-white px-6 py-3 rounded-[var(--radius-md)] font-semibold hover:bg-[var(--primary-hover)]"
             >
               + Adaugă Anunț Nou
             </button>
@@ -145,7 +146,7 @@ export default function AdminAnunturiEvenimente() {
               key={anunt.id}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="bg-[var(--card-bg)] rounded-xl shadow-md p-6 border border-[var(--border)]"
+              className="glass-card p-6"
             >
               <div className="flex justify-between items-start">
                 <div>
