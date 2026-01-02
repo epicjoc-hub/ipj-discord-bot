@@ -122,7 +122,7 @@ Click **"Save"** după fiecare variabilă.
    HTTP server listening on port 3000
    ```
 
-✅ **Bot e LIVE!** Noteaza URL-ul: `https://ipj_discord_bot.onrender.com`
+✅ **Bot e LIVE!** Noteaza URL-ul: `https://ipj-discord-bot.onrender.com`
 
 ---
 
@@ -189,7 +189,7 @@ Vercel va cere Environment Variables. Completeaza:
 | `VERIFY_SECRET` | `<EXACT SAME ca în Render!>` | Encrypted |
 | `DISCORD_CLIENT_ID` | `<din Discord OAuth2>` | Regular |
 | `DISCORD_CLIENT_SECRET` | `<din Discord OAuth2>` | Encrypted |
-| `NEXT_PUBLIC_BOT_API_URL` | `https://ipj_discord_bot.onrender.com` | Regular |
+| `NEXT_PUBLIC_BOT_API_URL` | `https://ipj-discord-bot.onrender.com` | Regular |
 
 ### ⚠️ **CRITICAL: VERIFY_SECRET trebuie EXACT ACELAȘI în Render și Vercel!**
 
@@ -202,7 +202,7 @@ Click **"Deploy"**
 ### ✅ Bot (Render)
 ```bash
 # Test health endpoint
-curl https://ipj_discord_bot.onrender.com/health
+curl https://ipj-discord-bot.onrender.com/health
 
 # Response ar trebui să fie:
 # {"ok":true,"bot":"BotName#0000"}
@@ -243,7 +243,7 @@ VERCEL (Site):
 ☐ VERIFY_SECRET setat (SAME ca Render!)
 ☐ DISCORD_CLIENT_ID setat
 ☐ DISCORD_CLIENT_SECRET setat (Encrypted)
-☐ NEXT_PUBLIC_BOT_API_URL = https://ipj_discord_bot.onrender.com
+☐ NEXT_PUBLIC_BOT_API_URL = https://ipj-discord-bot.onrender.com
 ☐ Deploy successful
 ☐ Site accessible și login funcționează
 

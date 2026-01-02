@@ -58,7 +58,7 @@ NEXT_PUBLIC_BOT_API_URL = https://ipj-bot.onrender.com [REGULAR]
 | `VERIFY_SECRET` | Tu generi (local) | **TREBUIE EGAL cu cel de la Render!** |
 | `DISCORD_CLIENT_ID` | [Dev Portal](https://discord.com/developers/applications) → OAuth2 | Copie OAuth2 Client ID |
 | `DISCORD_CLIENT_SECRET` | [Dev Portal](https://discord.com/developers/applications) → OAuth2 | Copie Client Secret (keep encrypted!) |
-| `NEXT_PUBLIC_BOT_API_URL` | Render Bot URL | https://<your-service>.onrender.com |
+| `NEXT_PUBLIC_BOT_API_URL` | Render Bot URL | https://ipj-discord-bot.onrender.com |
 
 ---
 
