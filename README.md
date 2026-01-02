@@ -114,7 +114,9 @@ Bot-ul poate fi deploy-at pe Render, Railway, VPS, etc.
 
 - [MONOREPO.md](MONOREPO.md) - Overview structurii bot + site
 - [LOCAL-DEV-SETUP.md](LOCAL-DEV-SETUP.md) - Ruleaza local cu Docker Compose (bot + site)
-- [RENDER-DEPLOY.md](RENDER-DEPLOY.md) - Deploy bot pe Render (monorepo)
+- **Deployment**:
+  - [RENDER-DEPLOY.md](RENDER-DEPLOY.md) - Deploy bot pe Render (monorepo)
+  - [VERCEL-DEPLOY.md](VERCEL-DEPLOY.md) - Deploy site pe Vercel (monorepo)
 - `bot/HOSTING-RENDER.md` - Details despre `/verify` endpoint și VERIFY_SECRET
 
 ## 🔗 Repository-uri Conexe

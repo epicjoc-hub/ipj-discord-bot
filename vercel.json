@@ -1,0 +1,11 @@
+{
+  "root": "site",
+  "buildCommand": "npm install && npm run build",
+  "outputDirectory": "site/.next",
+  "env": {
+    "VERIFY_SECRET": "@verify_secret",
+    "DISCORD_CLIENT_ID": "@discord_client_id",
+    "DISCORD_CLIENT_SECRET": "@discord_client_secret",
+    "NEXT_PUBLIC_BOT_API_URL": "@next_public_bot_api_url"
+  }
+}
