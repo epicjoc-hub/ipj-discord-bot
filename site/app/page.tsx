@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { motion } from 'framer-motion';
+import { motion, type Variants } from 'framer-motion';
 import { apiClient, type AnuntEveniment } from '@/lib/client-api';
 import { AnnouncementCard } from '@/components/ui/AnnouncementCard';
 import { LoadingSkeleton } from '@/components/ui/LoadingSkeleton';
@@ -55,7 +55,7 @@ export default function Home() {
 
   const hasAnnouncements = recentePolitie.length > 0 || recenteEvenimente.length > 0;
 
-  const containerVariants = {
+  const containerVariants: Variants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
@@ -66,7 +66,7 @@ export default function Home() {
     },
   };
 
-  const itemVariants = {
+  const itemVariants: Variants = {
     hidden: { y: 20, opacity: 0 },
     visible: { y: 0, opacity: 1, transition: { duration: 0.35, ease: 'easeOut' } },
   };
