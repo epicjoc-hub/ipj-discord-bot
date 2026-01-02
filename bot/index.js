@@ -86,7 +86,36 @@ app.get('/verify', (req, res) => {
   const discordId = storage.verifyToken(token);
   if (!discordId) return res.status(401).json({ ok: false, error: 'invalid_or_expired' });
 
-  return res.json({ ok: true, discordId });
+  // Get user data if available
+  const user = storage.getUserByDiscordId(discordId);
+
+  return res.json({ 
+    ok: true, 
+    discordId,
+    user: user || null
+  });
+});
+
+// Get user by Discord ID
+// Example: GET /user?discordId=123456789
+app.get('/user', (req, res) => {
+  const expectedSecret = process.env.VERIFY_SECRET;
+  if (!expectedSecret) {
+    return res.status(500).json({ ok: false, error: 'server_misconfigured' });
+  }
+
+  const providedSecret = req.header('x-verify-secret');
+  if (!providedSecret || providedSecret !== expectedSecret) {
+    return res.status(403).json({ ok: false, error: 'forbidden' });
+  }
+
+  const discordId = req.query.discordId;
+  if (!discordId) return res.status(400).json({ ok: false, error: 'no_discordId' });
+
+  const user = storage.getUserByDiscordId(discordId);
+  if (!user) return res.status(404).json({ ok: false, error: 'user_not_found' });
+
+  return res.json({ ok: true, user });
 });
 
 const port = process.env.PORT || 3000;

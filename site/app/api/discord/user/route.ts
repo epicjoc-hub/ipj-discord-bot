@@ -1,8 +1,4 @@
 import { NextResponse } from 'next/server';
-import fs from 'fs';
-import path from 'path';
-
-const USERS_FILE = path.join(process.cwd(), 'data', 'discord-users.json');
 
 export const runtime = 'nodejs';
 
@@ -15,25 +11,42 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: 'Discord ID lipsă' }, { status: 400 });
     }
 
-    // Citește utilizatorii
-    let users = [];
-    if (fs.existsSync(USERS_FILE)) {
-      const usersData = fs.readFileSync(USERS_FILE, 'utf8');
-      users = JSON.parse(usersData);
+    // Call bot API to get user data
+    const botApiUrl = process.env.BOT_API_URL;
+    const verifySecret = process.env.VERIFY_SECRET;
+
+    if (!botApiUrl || !verifySecret) {
+      console.error('BOT_API_URL or VERIFY_SECRET not configured');
+      return NextResponse.json({ error: 'Server misconfigured' }, { status: 500 });
     }
 
-    const user = users.find((u: any) => u.discordId === discordId);
+    const response = await fetch(`${botApiUrl}/user?discordId=${encodeURIComponent(discordId)}`, {
+      method: 'GET',
+      headers: {
+        'x-verify-secret': verifySecret,
+      },
+    });
 
-    if (!user) {
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      return NextResponse.json(
+        { error: errorData.error || 'Utilizator negăsit' },
+        { status: response.status }
+      );
+    }
+
+    const data = await response.json();
+
+    if (!data.ok || !data.user) {
       return NextResponse.json({ error: 'Utilizator negăsit' }, { status: 404 });
     }
 
     return NextResponse.json({
       success: true,
       user: {
-        discordId: user.discordId,
-        grad: user.grad,
-        nume: user.nume
+        discordId: data.user.discordId,
+        grad: data.user.grad,
+        nume: data.user.nume
       }
     });
   } catch (error) {

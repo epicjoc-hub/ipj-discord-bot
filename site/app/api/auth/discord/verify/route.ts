@@ -1,9 +1,4 @@
 import { NextResponse } from 'next/server';
-import fs from 'fs';
-import path from 'path';
-
-const TOKENS_FILE = path.join(process.cwd(), 'data', 'discord-tokens.json');
-const USERS_FILE = path.join(process.cwd(), 'data', 'discord-users.json');
 
 export const runtime = 'nodejs';
 
@@ -16,37 +11,40 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: 'Token lipsă' }, { status: 400 });
     }
 
-    // Citește token-urile
-    let tokens = [];
-    if (fs.existsSync(TOKENS_FILE)) {
-      const tokensData = fs.readFileSync(TOKENS_FILE, 'utf8');
-      tokens = JSON.parse(tokensData);
+    // Call bot API to verify token
+    const botApiUrl = process.env.BOT_API_URL;
+    const verifySecret = process.env.VERIFY_SECRET;
+
+    if (!botApiUrl || !verifySecret) {
+      console.error('BOT_API_URL or VERIFY_SECRET not configured');
+      return NextResponse.json({ error: 'Server misconfigured' }, { status: 500 });
     }
 
-    // Elimină token-urile expirate (doar in-memory — nu persistăm aici)
-    const now = new Date();
-    const validTokens = tokens.filter((t: any) => new Date(t.expiresAt) > now);
+    const response = await fetch(`${botApiUrl}/verify?token=${encodeURIComponent(token)}`, {
+      method: 'GET',
+      headers: {
+        'x-verify-secret': verifySecret,
+      },
+    });
 
-    // Caută token-ul
-    const tokenData = validTokens.find((t: any) => t.token === token);
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      return NextResponse.json(
+        { error: errorData.error || 'Token invalid sau expirat' },
+        { status: response.status }
+      );
+    }
 
-    if (!tokenData) {
+    const data = await response.json();
+
+    if (!data.ok) {
       return NextResponse.json({ error: 'Token invalid sau expirat' }, { status: 401 });
     }
 
-    // Obține datele utilizatorului
-    let users = [];
-    if (fs.existsSync(USERS_FILE)) {
-      const usersData = fs.readFileSync(USERS_FILE, 'utf8');
-      users = JSON.parse(usersData);
-    }
-
-    const user = users.find((u: any) => u.discordId === tokenData.discordId);
-
     return NextResponse.json({
       success: true,
-      discordId: tokenData.discordId,
-      user: user || null
+      discordId: data.discordId,
+      user: data.user || null
     });
   } catch (error) {
     console.error('Error verifying token:', error);
