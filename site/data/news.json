@@ -1,0 +1,36 @@
+[
+  {
+    "id": "1",
+    "slug": "campanie-securitate-rutiera",
+    "title": "Campanie de securitate rutieră - Los Santos",
+    "date": "2024-01-15",
+    "author": "Inspectoratul de Poliție Județean Los Santos",
+    "category": "Securitate",
+    "excerpt": "Lansăm o nouă campanie de conștientizare pentru securitatea rutieră în județul Los Santos.",
+    "content": "Inspectoratul de Poliție Județean Los Santos lansează o campanie amplă de conștientizare privind securitatea rutieră. Campania va include activități de educație rutieră, controale de rută și informare publică despre respectarea regulilor de circulație.\n\nObiectivele principale ale campaniei:\n- Reducerea numărului de accidente rutiere\n- Educarea șoferilor despre importanța respectării limitelor de viteză\n- Promovarea utilizării centurilor de siguranță\n- Conștientizarea despre pericolul condusului sub influența alcoolului",
+    "image": "/images/news/campanie-securitate.jpg"
+  },
+  {
+    "id": "2",
+    "slug": "recrutare-ofiteri-2024",
+    "title": "Recrutare ofițeri de poliție - 2024",
+    "date": "2024-01-10",
+    "author": "Inspectoratul de Poliție Județean Los Santos",
+    "category": "Recrutare",
+    "excerpt": "Suntem în căutare de ofițeri dedicați pentru a ne alătura echipei.",
+    "content": "Inspectoratul de Poliție Județean Los Santos anunță deschiderea sesiunii de recrutare pentru anul 2024. Căutăm persoane dedicate, cu spirit civic și dorință de a servi comunitatea.\n\nCerințe:\n- Vârstă între 18-35 ani\n- Studii superioare sau studii medii complete\n- Condiție fizică bună\n- Fără antecedente penale\n- Cunoștințe de bază despre legislație\n\nBeneficii:\n- Salariu competitiv\n- Pachet de beneficii sociale\n- Oportunități de dezvoltare profesională\n- Pensiune de serviciu",
+    "image": "/images/news/recrutare.jpg"
+  },
+  {
+    "id": "3",
+    "slug": "parteneriat-comunitate",
+    "title": "Parteneriat cu comunitatea locală",
+    "date": "2024-01-05",
+    "author": "Inspectoratul de Poliție Județean Los Santos",
+    "category": "Comunitate",
+    "excerpt": "Am semnat un parteneriat strategic cu organizațiile comunitare locale.",
+    "content": "Inspectoratul de Poliție Județean Los Santos a semnat un parteneriat strategic cu mai multe organizații comunitare din județ. Acest parteneriat are ca scop îmbunătățirea colaborării între poliție și comunitate.\n\nPrincipalele obiective:\n- Creșterea încrederii între poliție și cetățeni\n- Organizarea de evenimente comune de conștientizare\n- Programe de prevenire a criminalității\n- Sprijin pentru tinerii din comunitate",
+    "image": "/images/news/parteneriat.jpg"
+  }
+]
+

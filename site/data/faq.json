@@ -1,0 +1,39 @@
+[
+  {
+    "id": "1",
+    "category": "General",
+    "question": "Cum pot contacta Inspectoratul de Poliție Județean Los Santos?",
+    "answer": "Puteți ne contacta prin telefon la numărul de urgență 112 sau la numărul central al inspectoratului. De asemenea, puteți folosi formularul de contact de pe site sau să ne vizitați la sediul nostru."
+  },
+  {
+    "id": "2",
+    "category": "General",
+    "question": "Ce servicii oferă inspectoratul?",
+    "answer": "Inspectoratul oferă o gamă largă de servicii, inclusiv: emisiune de certificate, raportarea infracțiunilor, asistență în cazuri de urgență, programe de prevenire a criminalității și educație rutieră."
+  },
+  {
+    "id": "3",
+    "category": "Recrutare",
+    "question": "Cum pot aplica pentru un post de ofițer de poliție?",
+    "answer": "Procesul de recrutare include: depunerea cererii, teste psihologice, teste fizice, interviu și verificări de securitate. Detaliile complete sunt disponibile în secțiunea de recrutare sau puteți contacta departamentul de resurse umane."
+  },
+  {
+    "id": "4",
+    "category": "Servicii",
+    "question": "Cum pot obține un certificat de cazier judiciar?",
+    "answer": "Certificatul de cazier judiciar poate fi solicitat online prin platforma națională sau direct la sediul inspectoratului. Este necesar un act de identitate și plata taxei aferente."
+  },
+  {
+    "id": "5",
+    "category": "Urgențe",
+    "question": "Ce trebuie să fac în caz de urgență?",
+    "answer": "În caz de urgență, apelați imediat 112. Operatorul vă va direcționa către serviciul potrivit (poliție, pompieri, ambulanță). Nu întârziați apelul în situații critice."
+  },
+  {
+    "id": "6",
+    "category": "Comunitate",
+    "question": "Cum pot raporta o infracțiune sau un incident?",
+    "answer": "Puteți raporta o infracțiune la orice secție de poliție, prin apel la 112 pentru urgențe, sau folosind formularul online de pe site-ul nostru. Este important să furnizați cât mai multe detalii despre incident."
+  }
+]
+

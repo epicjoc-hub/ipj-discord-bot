@@ -1,0 +1,45 @@
+[
+  {
+    "id": "1",
+    "title": "Campanie securitate rutieră",
+    "category": "Evenimente",
+    "image": "/images/gallery/event1.jpg",
+    "description": "Lansarea campaniei de securitate rutieră 2024"
+  },
+  {
+    "id": "2",
+    "title": "Ceremonia de promovare",
+    "category": "Evenimente",
+    "image": "/images/gallery/event2.jpg",
+    "description": "Ceremonia de promovare a noilor ofițeri"
+  },
+  {
+    "id": "3",
+    "title": "Activitate comunitara",
+    "category": "Comunitate",
+    "image": "/images/gallery/community1.jpg",
+    "description": "Activitate de conștientizare în comunitate"
+  },
+  {
+    "id": "4",
+    "title": "Echipa de intervenție",
+    "category": "Echipă",
+    "image": "/images/gallery/team1.jpg",
+    "description": "Echipa de intervenție rapidă în acțiune"
+  },
+  {
+    "id": "5",
+    "title": "Workshop prevenție",
+    "category": "Educație",
+    "image": "/images/gallery/workshop1.jpg",
+    "description": "Workshop despre prevenirea criminalității"
+  },
+  {
+    "id": "6",
+    "title": "Colaborare cu școlile",
+    "category": "Educație",
+    "image": "/images/gallery/school1.jpg",
+    "description": "Programe educaționale în școlile din județ"
+  }
+]
+

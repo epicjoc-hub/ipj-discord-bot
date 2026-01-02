@@ -1,0 +1,39 @@
+[
+  {
+    "id": "1",
+    "name": "Comisar Șef Ion Popescu",
+    "position": "Șef Inspectorat",
+    "department": "Conducere",
+    "description": "Comisar Șef cu peste 25 de ani de experiență în forțele de poliție. Specializat în managementul resurselor umane și coordonarea operațiunilor complexe.",
+    "image": "/images/officers/popescu.jpg",
+    "email": "ion.popescu@ipj-los-santos.ro"
+  },
+  {
+    "id": "2",
+    "name": "Comisar Maria Ionescu",
+    "position": "Șef Secție Criminalistică",
+    "department": "Criminalistică",
+    "description": "Comisar cu expertiză în investigații criminale și analiză de probe. Coordonează echipa de criminalistică și colaborează strâns cu procuratura.",
+    "image": "/images/officers/ionescu.jpg",
+    "email": "maria.ionescu@ipj-los-santos.ro"
+  },
+  {
+    "id": "3",
+    "name": "Inspector Șef Alexandru Georgescu",
+    "position": "Șef Secție Trafic",
+    "department": "Trafic",
+    "description": "Inspector Șef responsabil cu coordonarea activităților de securitate rutieră și controlul traficului în județul Los Santos.",
+    "image": "/images/officers/georgescu.jpg",
+    "email": "alexandru.georgescu@ipj-los-santos.ro"
+  },
+  {
+    "id": "4",
+    "name": "Inspector Ana Dumitrescu",
+    "position": "Ofițer Relații Publice",
+    "department": "Relații Publice",
+    "description": "Responsabilă cu comunicarea cu publicul, organizarea evenimentelor și menținerea prezenței online a inspectoratului.",
+    "image": "/images/officers/dumitrescu.jpg",
+    "email": "ana.dumitrescu@ipj-los-santos.ro"
+  }
+]
+

@@ -1,0 +1,27 @@
+[
+  {
+    "id": "1",
+    "categorie": "Comunicate",
+    "titlu": "Comunicat de Presă - Campanie Securitate Rutieră",
+    "data": "2024-01-20",
+    "conținut": "Inspectoratul de Poliție Județean Los Santos anunță lansarea unei noi campanii de securitate rutieră...",
+    "prioritate": "normal"
+  },
+  {
+    "id": "2",
+    "categorie": "Urgente",
+    "titlu": "ALERTĂ: Trafic Restricționat",
+    "data": "2024-01-21",
+    "conținut": "Din cauza lucrărilor de reparație, traficul va fi restricționat pe străzile principale...",
+    "prioritate": "urgent"
+  },
+  {
+    "id": "3",
+    "categorie": "Raport Săptămânal",
+    "titlu": "Raport Activitate Săptămâna 15-21 Ianuarie 2024",
+    "data": "2024-01-22",
+    "conținut": "Raportul săptămânal al activităților Inspectoratului de Poliție Județean Los Santos...",
+    "prioritate": "normal"
+  }
+]
+

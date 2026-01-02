@@ -1,0 +1,21 @@
+[
+  {
+    "id": "1",
+    "nume": "Comisar Șef Ion Popescu",
+    "grad": "Comisar Șef",
+    "functie": "Șef Inspectorat",
+    "descriere": "Comisar Șef cu peste 25 de ani de experiență în forțele de poliție. Specializat în managementul resurselor umane și coordonarea operațiunilor complexe.",
+    "imagine": "/images/officers/popescu.jpg",
+    "email": "ion.popescu@ipj-los-santos.ro"
+  },
+  {
+    "id": "2",
+    "nume": "Comisar Maria Ionescu",
+    "grad": "Comisar",
+    "functie": "Șef Secție Criminalistică",
+    "descriere": "Comisar cu expertiză în investigații criminale și analiză de probe. Coordonează echipa de criminalistică și colaborează strâns cu procuratura.",
+    "imagine": "/images/officers/ionescu.jpg",
+    "email": "maria.ionescu@ipj-los-santos.ro"
+  }
+]
+
