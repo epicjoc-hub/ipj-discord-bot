@@ -38,3 +38,35 @@ export async function PUT(
     return NextResponse.json({ error: 'Eroare la actualizarea anunțului' }, { status: 500 });
   }
 }
+
+export async function DELETE(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const { id } = await params;
+    const botApiUrl = process.env.BOT_API_URL;
+    const verifySecret = process.env.VERIFY_SECRET;
+
+    if (!botApiUrl || !verifySecret) {
+      console.error('BOT_API_URL or VERIFY_SECRET not configured');
+      return NextResponse.json({ error: 'Server misconfigured' }, { status: 500 });
+    }
+
+    const response = await fetch(`${botApiUrl}/anunturi-politie/${id}`, {
+      method: 'DELETE',
+      headers: {
+        'x-verify-secret': verifySecret,
+      },
+    });
+
+    if (!response.ok) {
+      return NextResponse.json({ error: 'Eroare la ștergerea anunțului' }, { status: 500 });
+    }
+
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error('Error deleting anunt politie:', error);
+    return NextResponse.json({ error: 'Eroare la ștergerea anunțului' }, { status: 500 });
+  }
+}

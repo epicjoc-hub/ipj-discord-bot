@@ -12,6 +12,7 @@ export default function AdminAnunturiEvenimente() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [formData, setFormData] = useState<any>({});
   const [saving, setSaving] = useState(false);
+  const [deleting, setDeleting] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -74,6 +75,28 @@ export default function AdminAnunturiEvenimente() {
       setError('Nu am putut salva anunțul.');
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+    if (!confirm('Sigur dorești să ștergi acest anunț?')) return;
+
+    setDeleting(id);
+    setError(null);
+
+    try {
+      const response = await fetch(`/api/anunturi-evenimente/${id}`, {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) throw new Error('Eroare la ștergere');
+
+      await loadAnunturi();
+    } catch (err) {
+      console.error(err);
+      setError('Nu am putut șterge anunțul.');
+    } finally {
+      setDeleting(null);
     }
   };
 
@@ -196,15 +219,24 @@ export default function AdminAnunturiEvenimente() {
                     {anunt.status && <span className="px-3 py-1 rounded-full bg-white/5 border border-[var(--glass-border)]">✅ {anunt.status}</span>}
                   </div>
                 </div>
-                <button
-                  onClick={() => {
-                    setEditingId(anunt.id);
-                    setFormData(anunt);
-                  }}
-                  className="bg-[var(--primary)] text-white px-4 py-2 rounded-lg hover:bg-[var(--primary-hover)]"
-                >
-                  Editează
-                </button>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => {
+                      setEditingId(anunt.id);
+                      setFormData(anunt);
+                    }}
+                    className="bg-[var(--primary)] text-white px-4 py-2 rounded-lg hover:bg-[var(--primary-hover)]"
+                  >
+                    Editează
+                  </button>
+                  <button
+                    onClick={() => handleDelete(anunt.id)}
+                    disabled={deleting === anunt.id}
+                    className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {deleting === anunt.id ? 'Șterg...' : 'Șterge'}
+                  </button>
+                </div>
               </div>
             </motion.div>
           ))}
