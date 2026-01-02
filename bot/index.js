@@ -185,8 +185,13 @@ app.post('/cereri-evenimente', (req, res) => {
   if (!expectedSecret || req.header('x-verify-secret') !== expectedSecret) {
     return res.status(403).json({ ok: false, error: 'forbidden' });
   }
-  const cerere = storage.addCerere(req.body);
-  return res.json({ success: true, cerere });
+  try {
+    const cerere = storage.addCerere(req.body);
+    return res.json({ success: true, cerere });
+  } catch (error) {
+    console.error('Error creating cerere:', error);
+    return res.status(500).json({ ok: false, error: 'internal_error', message: error.message });
+  }
 });
 
 app.put('/cereri-evenimente/:id', (req, res) => {

@@ -29,6 +29,7 @@ type CerereFormData = z.infer<typeof cerereSchema>;
 export default function CerereEvenimentPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
+  const [errorMessage, setErrorMessage] = useState<string>('');
 
   const {
     register,
@@ -49,6 +50,7 @@ export default function CerereEvenimentPage() {
   const onSubmit = async (data: CerereFormData) => {
     setIsSubmitting(true);
     setSubmitStatus('idle');
+    setErrorMessage('');
 
     try {
       const response = await fetch('/api/cereri-evenimente', {
@@ -65,10 +67,13 @@ export default function CerereEvenimentPage() {
         setSubmitStatus('success');
         reset();
       } else {
+        const errorData = await response.json().catch(() => ({}));
+        setErrorMessage(errorData.error || 'Eroare la trimiterea cererii');
         setSubmitStatus('error');
       }
     } catch (error) {
       console.error('Error submitting form:', error);
+      setErrorMessage('Eroare de conexiune. Verificați conexiunea la internet.');
       setSubmitStatus('error');
     } finally {
       setIsSubmitting(false);
@@ -313,7 +318,7 @@ export default function CerereEvenimentPage() {
               animate={{ opacity: 1, y: 0 }}
               className="bg-[var(--accent)]/12 border border-[var(--glass-border)] text-[var(--text-primary)] px-4 py-3 rounded-[var(--radius-md)]"
             >
-              A apărut o eroare la trimiterea cererii. Vă rugăm să încercați din nou.
+              {errorMessage || 'A apărut o eroare la trimiterea cererii. Vă rugăm să încercați din nou.'}
             </motion.div>
           )}
 

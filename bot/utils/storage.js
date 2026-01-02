@@ -166,17 +166,26 @@ function writeCereri(cereri) {
 }
 
 function addCerere(cerere) {
-  const cereri = readCereri();
-  const newCerere = {
-    id: Date.now().toString(),
-    ...cerere,
-    status: 'pending',
-    dataCreare: new Date().toISOString(),
-    istoric: [],
-  };
-  cereri.push(newCerere);
-  writeCereri(cereri);
-  return newCerere;
+  try {
+    const cereri = readCereri();
+    const newCerere = {
+      id: Date.now().toString(),
+      ...cerere,
+      status: cerere.status || 'pending',
+      dataCreare: cerere.dataCreare || new Date().toISOString(),
+      istoric: [],
+    };
+    cereri.push(newCerere);
+    const written = writeCereri(cereri);
+    if (!written) {
+      throw new Error('Failed to write cerere to file');
+    }
+    console.log('Cerere added successfully:', newCerere.id);
+    return newCerere;
+  } catch (error) {
+    console.error('Error in addCerere:', error);
+    throw error;
+  }
 }
 
 function updateCerere(id, updates) {
