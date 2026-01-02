@@ -181,15 +181,22 @@ app.get('/cereri-evenimente', (req, res) => {
 });
 
 app.post('/cereri-evenimente', (req, res) => {
+  console.log('[POST /cereri-evenimente] Received request from:', req.ip);
+  console.log('[POST /cereri-evenimente] Headers:', JSON.stringify(req.headers));
+  
   const expectedSecret = process.env.VERIFY_SECRET;
   if (!expectedSecret || req.header('x-verify-secret') !== expectedSecret) {
+    console.error('[POST /cereri-evenimente] Forbidden: Invalid or missing secret');
     return res.status(403).json({ ok: false, error: 'forbidden' });
   }
+  
   try {
+    console.log('[POST /cereri-evenimente] Body:', JSON.stringify(req.body));
     const cerere = storage.addCerere(req.body);
+    console.log('[POST /cereri-evenimente] Success, created cerere:', cerere.id);
     return res.json({ success: true, cerere });
   } catch (error) {
-    console.error('Error creating cerere:', error);
+    console.error('[POST /cereri-evenimente] Error:', error);
     return res.status(500).json({ ok: false, error: 'internal_error', message: error.message });
   }
 });

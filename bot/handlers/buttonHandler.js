@@ -89,23 +89,33 @@ async function handleAcceseazaAdmin(interaction) {
 
       await interaction.reply({
         content: '✅ Link-ul pentru accesare admin a fost trimis în mesaj privat!',
-        ephemeral: true
+        flags: 64 // ephemeral flag
       });
-    } catch (error) {
-      console.error('Error sending DM:', error);
-      await interaction.reply({
-        content: `❌ Nu am putut trimite mesaj privat. Asigură-te că ai DM-urile activate.\n\n` +
-                 `Link-ul tău: ${adminLink}\n` +
-                 `⚠️ **Atenție:** Link-ul expiră în 15 minute!`,
-        ephemeral: true
-      });
+    } catch (dmError) {
+      console.error('Error sending DM:', dmError);
+      try {
+        await interaction.reply({
+          content: `❌ Nu am putut trimite mesaj privat. Asigură-te că ai DM-urile activate.\n\n` +
+                   `Link-ul tău: ${adminLink}\n` +
+                   `⚠️ **Atenție:** Link-ul expiră în 15 minute!`,
+          flags: 64 // ephemeral flag
+        });
+      } catch (replyError) {
+        console.error('Error replying to interaction:', replyError);
+      }
     }
   } catch (error) {
     console.error('Error in handleAcceseazaAdmin:', error);
-    await interaction.reply({
-      content: '❌ A apărut o eroare. Te rugăm să încerci din nou.',
-      ephemeral: true
-    });
+    try {
+      if (!interaction.replied && !interaction.deferred) {
+        await interaction.reply({
+          content: '❌ A apărut o eroare. Te rugăm să încerci din nou.',
+          flags: 64 // ephemeral flag
+        });
+      }
+    } catch (replyError) {
+      console.error('Error sending error reply:', replyError);
+    }
   }
 }
 
