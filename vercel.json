@@ -1,5 +1,5 @@
 {
-  "buildCommand": "cd site && npm ci && npm run build",
+  "buildCommand": "git submodule update --init --recursive && cd site && npm ci && npm run build",
   "outputDirectory": "site/.next",
   "installCommand": "cd site && npm ci"
 }
