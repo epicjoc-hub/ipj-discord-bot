@@ -72,12 +72,11 @@ async function handleAcceseazaAdmin(interaction) {
     const token = storage.generateToken();
     storage.saveToken(interaction.user.id, token);
 
-    const siteUrl = config.SITE_URL || '';
-    // Normalize site URL to avoid duplicate paths like /admin/admin
-    let baseUrl = siteUrl.replace(/\/+$|\s+$/g, '');
-    if (baseUrl.endsWith('/admin')) baseUrl = baseUrl.replace(/\/admin$/, '');
-    if (baseUrl === '') baseUrl = 'https://ipj-ls-pr-bzone.vercel.app';
+    // Use SITE_URL from config, remove trailing slashes
+    const baseUrl = config.SITE_URL.replace(/\/+$/, '');
     const adminLink = `${baseUrl}/admin?token=${token}`;
+    
+    console.log('Generated admin link:', adminLink);
 
     // Trimite mesaj privat
     try {

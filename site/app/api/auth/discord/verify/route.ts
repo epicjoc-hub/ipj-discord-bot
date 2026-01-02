@@ -16,7 +16,10 @@ export async function GET(request: Request) {
     const verifySecret = process.env.VERIFY_SECRET;
 
     if (!botApiUrl || !verifySecret) {
-      console.error('BOT_API_URL or VERIFY_SECRET not configured');
+      console.error('Environment variables missing:', {
+        hasBotApiUrl: !!botApiUrl,
+        hasVerifySecret: !!verifySecret
+      });
       return NextResponse.json({ error: 'Server misconfigured' }, { status: 500 });
     }
 
