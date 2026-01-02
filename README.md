@@ -2,6 +2,8 @@
 
 Bot Discord pentru gestionarea panel-ului și autentificării admin pentru site-ul IPJ Los Santos.
 
+> **Lucru împreună cu site-ul?** Vezi [LOCAL-DEV-SETUP.md](LOCAL-DEV-SETUP.md) pentru a rula bot + site local cu Docker Compose.
+
 ## 🚀 Setup Rapid
 
 1. **Clonează repository-ul:**
@@ -102,10 +104,19 @@ Vezi `HOSTING-24-7.md` pentru instrucțiuni despre cum să rulezi bot-ul 24/7 pe
 
 - `CUM-ADAUGA-BOT.md` - Cum să adaugi bot-ul pe serverul Discord
 - `HOSTING-24-7.md` - Cum să rulezi bot-ul 24/7
+- `HOSTING-RENDER.md` - Deploy pe Render cu `/verify` endpoint și VERIFY_SECRET
+- `LOCAL-DEV-SETUP.md` - Ruleaza local cu site-ul folosind Docker Compose
+
+## 🔗 Repository-uri Conexe
+
+- **Site Web (IPJ Admin Panel):** https://github.com/epicjoc-hub/ipj-ls-pr-bzone
+  - Token verification endpoint: `GET /verify?token=X` (cu header `x-verify-secret`)
+  - Port: 3001 (local) sau Vercel (production)
 
 ## ⚠️ Note Importante
 
 - Bot-ul trebuie să ruleze continuu pentru a funcționa
 - Token-ul bot-ului este secret - nu-l împărtăși niciodată
 - Dacă token-ul este compromis, regenerează-l din Discord Developer Portal
+- `VERIFY_SECRET` trebuie să fie același în bot (Render) și site (Vercel) pentru token verification
 - Verificarea role-ului se face la fiecare accesare admin

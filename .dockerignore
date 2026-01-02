@@ -5,3 +5,7 @@ node_modules/
 .DS_Store
 *.log
 docker-compose.override.yml
+
+# Exclude git files from site subclone
+site/.git/
+site/.gitignore

@@ -1,30 +1,30 @@
 #!/bin/bash
 
-# Setup script to clone and configure both bot and site repos for local development
+# Setup script for monorepo (bot + site together)
 # Usage: bash setup-local-dev.sh
 
 set -e
 
-echo "🚀 Setting up local development environment for IPJ Discord Bot + Site..."
+echo "🚀 Setting up monorepo (IPJ Discord Bot + Site)..."
 echo ""
 
-# Check if both repos exist locally
-BOT_DIR="$(pwd)"
-SITE_DIR="../ipj-ls-pr-bzone"
+BOT_DIR="./bot"
+SITE_DIR="./site"
 
-if [ -d "$SITE_DIR" ]; then
-  echo "✅ Site repo already exists at $SITE_DIR"
-else
-  echo "📥 Cloning site repo from GitHub..."
-  cd ..
-  git clone https://github.com/epicjoc-hub/ipj-ls-pr-bzone.git
-  cd "$BOT_DIR"
-  echo "✅ Site repo cloned"
+# Check if both directories exist
+if [ ! -d "$BOT_DIR" ]; then
+  echo "❌ Bot directory not found at $BOT_DIR"
+  exit 1
+fi
+
+if [ ! -d "$SITE_DIR" ]; then
+  echo "❌ Site directory not found at $SITE_DIR (clone ipj-ls-pr-bzone there)"
+  exit 1
 fi
 
 # Setup bot repo
 echo ""
-echo "🤖 Setting up bot repo..."
+echo "🤖 Setting up bot..."
 if [ ! -f "$BOT_DIR/.env" ]; then
   cp "$BOT_DIR/.env.example" "$BOT_DIR/.env"
   echo "✅ Created .env for bot from .env.example"
@@ -32,15 +32,16 @@ else
   echo "✅ .env already exists for bot"
 fi
 
+cd "$BOT_DIR"
 npm install
 echo "✅ Bot dependencies installed"
+cd ..
 
 # Setup site repo
 echo ""
-echo "🌐 Setting up site repo..."
-cd "$SITE_DIR"
+echo "🌐 Setting up site..."
 if [ ! -f "$SITE_DIR/.env.local" ]; then
-  echo "⚠️  Create .env.local in site repo manually with required variables:"
+  echo "⚠️  Create .env.local in site directory with:"
   echo "   - VERIFY_SECRET (same as in bot .env)"
   echo "   - DISCORD_CLIENT_ID"
   echo "   - DISCORD_CLIENT_SECRET"
@@ -49,37 +50,32 @@ else
   echo "✅ .env.local already exists for site"
 fi
 
-if [ -f "$SITE_DIR/package.json" ]; then
+cd "$SITE_DIR"
+if [ -f "package.json" ]; then
   npm install
   echo "✅ Site dependencies installed"
 fi
-
-cd "$BOT_DIR"
+cd ..
 
 echo ""
-echo "📝 Local development setup complete!"
+echo "📝 Monorepo setup complete!"
 echo ""
 echo "Next steps:"
-echo "1. Set environment variables in both .env files:"
-echo "   - Bot repo ($BOT_DIR/.env):"
-echo "     - BOT_TOKEN: your Discord bot token"
-echo "     - VERIFY_SECRET: shared secret with site (e.g., openssl rand -hex 32)"
-echo "     - SITE_URL: http://localhost:3000 (or where your site runs)"
-echo "     - PORT: 3000 (or your preferred port)"
+echo "1. Set environment variables:"
+echo "   - Bot ($BOT_DIR/.env):"
+echo "     - BOT_TOKEN: Discord bot token"
+echo "     - VERIFY_SECRET: shared secret with site"
+echo "     - SITE_URL: http://localhost:3000"
+echo "     - PORT: 3000"
 echo ""
-echo "   - Site repo ($SITE_DIR/.env.local):"
+echo "   - Site ($SITE_DIR/.env.local):"
 echo "     - VERIFY_SECRET: same as bot"
 echo "     - DISCORD_CLIENT_ID: from Discord Developer Portal"
 echo "     - DISCORD_CLIENT_SECRET: from Discord Developer Portal"
 echo "     - NEXT_PUBLIC_BOT_API_URL: http://localhost:3000"
 echo ""
-echo "2. Start both services:"
-echo "   Option A - Docker Compose (recommended):"
-echo "     docker-compose up"
+echo "2. Start services:"
+echo "   docker-compose up"
 echo ""
-echo "   Option B - Manual (two terminals):"
-echo "     Terminal 1 (Bot): npm start"
-echo "     Terminal 2 (Site): cd $SITE_DIR && npm run dev"
-echo ""
-echo "3. Visit http://localhost:3000 and test the flow"
+echo "3. Visit http://localhost:3000 or http://localhost:3001"
 echo ""

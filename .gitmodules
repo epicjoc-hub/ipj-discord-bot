@@ -1,0 +1,3 @@
+[submodule "site"]
+	path = site
+	url = https://github.com/epicjoc-hub/ipj-ls-pr-bzone.git
