@@ -1,23 +1,6 @@
 import { NextResponse } from 'next/server';
-import fs from 'fs';
-import path from 'path';
 
 export const runtime = 'nodejs';
-
-const filePath = path.join(process.cwd(), 'data', 'cereri-evenimente.json');
-
-function readCereri() {
-  try {
-    const fileContents = fs.readFileSync(filePath, 'utf8');
-    return JSON.parse(fileContents);
-  } catch (error) {
-    return [];
-  }
-}
-
-function writeCereri(cereri: any[]) {
-  fs.writeFileSync(filePath, JSON.stringify(cereri, null, 2));
-}
 
 export async function POST(
   request: Request,
@@ -31,17 +14,33 @@ export async function POST(
       return NextResponse.json({ error: 'Acțiune invalidă' }, { status: 400 });
     }
 
-    const cereri = readCereri();
-    const cerereIndex = cereri.findIndex((c: any) => c.id === id);
+    const botApiUrl = process.env.BOT_API_URL;
+    const verifySecret = process.env.VERIFY_SECRET;
 
-    if (cerereIndex === -1) {
+    if (!botApiUrl || !verifySecret) {
+      console.error('BOT_API_URL or VERIFY_SECRET not configured');
+      return NextResponse.json({ error: 'Server misconfigured' }, { status: 500 });
+    }
+
+    // Get current cerere
+    const getCerereResponse = await fetch(`${botApiUrl}/cereri-evenimente`, {
+      headers: { 'x-verify-secret': verifySecret },
+    });
+
+    if (!getCerereResponse.ok) {
+      return NextResponse.json({ error: 'Eroare la citirea cererii' }, { status: 500 });
+    }
+
+    const cereri = await getCerereResponse.json();
+    const cerere = cereri.find((c: any) => c.id === id);
+
+    if (!cerere) {
       return NextResponse.json({ error: 'Cerere negăsită' }, { status: 404 });
     }
 
-    const cerere = cereri[cerereIndex];
     const newStatus = action === 'aprobare' ? 'approved' : 'rejected';
 
-    // Adaugă în istoric
+    // Add to history
     if (!cerere.istoric) {
       cerere.istoric = [];
     }
@@ -56,13 +55,24 @@ export async function POST(
 
     cerere.status = newStatus;
 
-    cereri[cerereIndex] = cerere;
-    writeCereri(cereri);
+    // Update cerere
+    const updateResponse = await fetch(`${botApiUrl}/cereri-evenimente/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-verify-secret': verifySecret,
+      },
+      body: JSON.stringify(cerere),
+    });
 
-    // Generează email pentru Discord
+    if (!updateResponse.ok) {
+      return NextResponse.json({ error: 'Eroare la actualizarea cererii' }, { status: 500 });
+    }
+
+    // Generate email for Discord
     const emailContent = generateEmailContent(cerere, newStatus, mesaj, adminUser);
 
-    // Trimite la Discord webhook (dacă e configurat)
+    // Send to Discord webhook (if configured)
     if (process.env.DISCORD_WEBHOOK_URL) {
       try {
         await fetch(process.env.DISCORD_WEBHOOK_URL, {

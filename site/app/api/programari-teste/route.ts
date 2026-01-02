@@ -1,27 +1,29 @@
 import { NextResponse } from 'next/server';
-import fs from 'fs';
-import path from 'path';
 
 export const runtime = 'nodejs';
 
-const filePath = path.join(process.cwd(), 'data', 'programari-teste.json');
-
-function readProgramari() {
-  try {
-    const fileContents = fs.readFileSync(filePath, 'utf8');
-    return JSON.parse(fileContents);
-  } catch (error) {
-    return [];
-  }
-}
-
-function writeProgramari(programari: any[]) {
-  fs.writeFileSync(filePath, JSON.stringify(programari, null, 2));
-}
-
 export async function GET() {
   try {
-    const programari = readProgramari();
+    const botApiUrl = process.env.BOT_API_URL;
+    const verifySecret = process.env.VERIFY_SECRET;
+
+    if (!botApiUrl || !verifySecret) {
+      console.error('BOT_API_URL or VERIFY_SECRET not configured');
+      return NextResponse.json({ error: 'Server misconfigured' }, { status: 500 });
+    }
+
+    const response = await fetch(`${botApiUrl}/programari-teste`, {
+      method: 'GET',
+      headers: {
+        'x-verify-secret': verifySecret,
+      },
+    });
+
+    if (!response.ok) {
+      return NextResponse.json({ error: 'Eroare la citirea programărilor' }, { status: 500 });
+    }
+
+    const programari = await response.json();
     return NextResponse.json(programari);
   } catch (error) {
     console.error('Error reading programari:', error);
@@ -32,19 +34,29 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const data = await request.json();
-    const programari = readProgramari();
+    const botApiUrl = process.env.BOT_API_URL;
+    const verifySecret = process.env.VERIFY_SECRET;
 
-    const newProgramare = {
-      id: Date.now().toString(),
-      ...data,
-      status: 'pending',
-      dataCreare: new Date().toISOString(),
-    };
+    if (!botApiUrl || !verifySecret) {
+      console.error('BOT_API_URL or VERIFY_SECRET not configured');
+      return NextResponse.json({ error: 'Server misconfigured' }, { status: 500 });
+    }
 
-    programari.push(newProgramare);
-    writeProgramari(programari);
+    const response = await fetch(`${botApiUrl}/programari-teste`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-verify-secret': verifySecret,
+      },
+      body: JSON.stringify(data),
+    });
 
-    return NextResponse.json({ success: true, programare: newProgramare }, { status: 201 });
+    if (!response.ok) {
+      return NextResponse.json({ error: 'Eroare la crearea programării' }, { status: 500 });
+    }
+
+    const result = await response.json();
+    return NextResponse.json(result, { status: 201 });
   } catch (error) {
     console.error('Error creating programare:', error);
     return NextResponse.json({ error: 'Eroare la crearea programării' }, { status: 500 });

@@ -1,23 +1,6 @@
 import { NextResponse } from 'next/server';
-import fs from 'fs';
-import path from 'path';
 
 export const runtime = 'nodejs';
-
-const filePath = path.join(process.cwd(), 'data', 'programari-teste.json');
-
-function readProgramari() {
-  try {
-    const fileContents = fs.readFileSync(filePath, 'utf8');
-    return JSON.parse(fileContents);
-  } catch (error) {
-    return [];
-  }
-}
-
-function writeProgramari(programari: any[]) {
-  fs.writeFileSync(filePath, JSON.stringify(programari, null, 2));
-}
 
 export async function POST(
   request: Request,
@@ -31,14 +14,30 @@ export async function POST(
       return NextResponse.json({ error: 'Toate câmpurile sunt obligatorii' }, { status: 400 });
     }
 
-    const programari = readProgramari();
-    const programareIndex = programari.findIndex((p: any) => p.id === id);
+    const botApiUrl = process.env.BOT_API_URL;
+    const verifySecret = process.env.VERIFY_SECRET;
 
-    if (programareIndex === -1) {
+    if (!botApiUrl || !verifySecret) {
+      console.error('BOT_API_URL or VERIFY_SECRET not configured');
+      return NextResponse.json({ error: 'Server misconfigured' }, { status: 500 });
+    }
+
+    // Get current programare
+    const getProgramareResponse = await fetch(`${botApiUrl}/programari-teste`, {
+      headers: { 'x-verify-secret': verifySecret },
+    });
+
+    if (!getProgramareResponse.ok) {
+      return NextResponse.json({ error: 'Eroare la citirea programării' }, { status: 500 });
+    }
+
+    const programari = await getProgramareResponse.json();
+    const programare = programari.find((p: any) => p.id === id);
+
+    if (!programare) {
       return NextResponse.json({ error: 'Programare negăsită' }, { status: 404 });
     }
 
-    const programare = programari[programareIndex];
     programare.status = 'scheduled';
     programare.dataTest = dataTest;
     programare.oraTest = oraTest;
@@ -48,13 +47,24 @@ export async function POST(
     programare.adminUser = adminUser;
     programare.dataProgramare = new Date().toISOString();
 
-    programari[programareIndex] = programare;
-    writeProgramari(programari);
+    // Update programare
+    const updateResponse = await fetch(`${botApiUrl}/programari-teste/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-verify-secret': verifySecret,
+      },
+      body: JSON.stringify(programare),
+    });
 
-    // Generează email pentru Discord
+    if (!updateResponse.ok) {
+      return NextResponse.json({ error: 'Eroare la programarea testului' }, { status: 500 });
+    }
+
+    // Generate email for Discord
     const emailContent = generateEmailContent(programare, adminUser);
 
-    // Trimite la Discord webhook (dacă e configurat)
+    // Send to Discord webhook (if configured)
     if (process.env.DISCORD_WEBHOOK_URL) {
       try {
         await fetch(process.env.DISCORD_WEBHOOK_URL, {

@@ -1,27 +1,29 @@
 import { NextResponse } from 'next/server';
-import fs from 'fs';
-import path from 'path';
 
 export const runtime = 'nodejs';
 
-const filePath = path.join(process.cwd(), 'data', 'cereri-evenimente.json');
-
-function readCereri() {
-  try {
-    const fileContents = fs.readFileSync(filePath, 'utf8');
-    return JSON.parse(fileContents);
-  } catch (error) {
-    return [];
-  }
-}
-
-function writeCereri(cereri: any[]) {
-  fs.writeFileSync(filePath, JSON.stringify(cereri, null, 2));
-}
-
 export async function GET() {
   try {
-    const cereri = readCereri();
+    const botApiUrl = process.env.BOT_API_URL;
+    const verifySecret = process.env.VERIFY_SECRET;
+
+    if (!botApiUrl || !verifySecret) {
+      console.error('BOT_API_URL or VERIFY_SECRET not configured');
+      return NextResponse.json({ error: 'Server misconfigured' }, { status: 500 });
+    }
+
+    const response = await fetch(`${botApiUrl}/cereri-evenimente`, {
+      method: 'GET',
+      headers: {
+        'x-verify-secret': verifySecret,
+      },
+    });
+
+    if (!response.ok) {
+      return NextResponse.json({ error: 'Eroare la citirea cererilor' }, { status: 500 });
+    }
+
+    const cereri = await response.json();
     return NextResponse.json(cereri);
   } catch (error) {
     console.error('Error reading cereri:', error);
@@ -32,20 +34,29 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const data = await request.json();
-    const cereri = readCereri();
+    const botApiUrl = process.env.BOT_API_URL;
+    const verifySecret = process.env.VERIFY_SECRET;
 
-    const newCerere = {
-      id: Date.now().toString(),
-      ...data,
-      status: 'pending',
-      dataCreare: new Date().toISOString(),
-      istoric: [],
-    };
+    if (!botApiUrl || !verifySecret) {
+      console.error('BOT_API_URL or VERIFY_SECRET not configured');
+      return NextResponse.json({ error: 'Server misconfigured' }, { status: 500 });
+    }
 
-    cereri.push(newCerere);
-    writeCereri(cereri);
+    const response = await fetch(`${botApiUrl}/cereri-evenimente`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-verify-secret': verifySecret,
+      },
+      body: JSON.stringify(data),
+    });
 
-    return NextResponse.json({ success: true, cerere: newCerere }, { status: 201 });
+    if (!response.ok) {
+      return NextResponse.json({ error: 'Eroare la crearea cererii' }, { status: 500 });
+    }
+
+    const result = await response.json();
+    return NextResponse.json(result, { status: 201 });
   } catch (error) {
     console.error('Error creating cerere:', error);
     return NextResponse.json({ error: 'Eroare la crearea cererii' }, { status: 500 });

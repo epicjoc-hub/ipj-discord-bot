@@ -3,6 +3,8 @@ const path = require('path');
 
 const USERS_FILE = path.join(__dirname, '../data/discord-users.json');
 const TOKENS_FILE = path.join(__dirname, '../data/discord-tokens.json');
+const CERERI_FILE = path.join(__dirname, '../data/cereri-evenimente.json');
+const PROGRAMARI_FILE = path.join(__dirname, '../data/programari-teste.json');
 
 // Ensure data directory exists
 const dataDir = path.join(__dirname, '../data');
@@ -17,6 +19,14 @@ if (!fs.existsSync(USERS_FILE)) {
 
 if (!fs.existsSync(TOKENS_FILE)) {
   fs.writeFileSync(TOKENS_FILE, JSON.stringify([], null, 2));
+}
+
+if (!fs.existsSync(CERERI_FILE)) {
+  fs.writeFileSync(CERERI_FILE, JSON.stringify([], null, 2));
+}
+
+if (!fs.existsSync(PROGRAMARI_FILE)) {
+  fs.writeFileSync(PROGRAMARI_FILE, JSON.stringify([], null, 2));
 }
 
 function readUsers() {
@@ -135,6 +145,95 @@ function verifyToken(token) {
   return tokenData ? tokenData.discordId : null;
 }
 
+// Cereri Evenimente
+function readCereri() {
+  try {
+    const data = fs.readFileSync(CERERI_FILE, 'utf8');
+    return JSON.parse(data);
+  } catch (error) {
+    console.error('Error reading cereri file:', error);
+    return [];
+  }
+}
+
+function writeCereri(cereri) {
+  try {
+    fs.writeFileSync(CERERI_FILE, JSON.stringify(cereri, null, 2));
+    return true;
+  } catch (error) {
+    console.error('Error writing cereri file:', error);
+    return false;
+  }
+}
+
+function addCerere(cerere) {
+  const cereri = readCereri();
+  const newCerere = {
+    id: Date.now().toString(),
+    ...cerere,
+    status: 'pending',
+    dataCreare: new Date().toISOString(),
+    istoric: [],
+  };
+  cereri.push(newCerere);
+  writeCereri(cereri);
+  return newCerere;
+}
+
+function updateCerere(id, updates) {
+  const cereri = readCereri();
+  const index = cereri.findIndex(c => c.id === id);
+  if (index === -1) return null;
+  
+  cereri[index] = { ...cereri[index], ...updates };
+  writeCereri(cereri);
+  return cereri[index];
+}
+
+// Programari Teste
+function readProgramari() {
+  try {
+    const data = fs.readFileSync(PROGRAMARI_FILE, 'utf8');
+    return JSON.parse(data);
+  } catch (error) {
+    console.error('Error reading programari file:', error);
+    return [];
+  }
+}
+
+function writeProgramari(programari) {
+  try {
+    fs.writeFileSync(PROGRAMARI_FILE, JSON.stringify(programari, null, 2));
+    return true;
+  } catch (error) {
+    console.error('Error writing programari file:', error);
+    return false;
+  }
+}
+
+function addProgramare(programare) {
+  const programari = readProgramari();
+  const newProgramare = {
+    id: Date.now().toString(),
+    ...programare,
+    status: 'pending',
+    dataCreare: new Date().toISOString(),
+  };
+  programari.push(newProgramare);
+  writeProgramari(programari);
+  return newProgramare;
+}
+
+function updateProgramare(id, updates) {
+  const programari = readProgramari();
+  const index = programari.findIndex(p => p.id === id);
+  if (index === -1) return null;
+  
+  programari[index] = { ...programari[index], ...updates };
+  writeProgramari(programari);
+  return programari[index];
+}
+
 module.exports = {
   getUserByDiscordId,
   saveUser,
@@ -142,6 +241,14 @@ module.exports = {
   hasUserSet,
   generateToken,
   saveToken,
-  verifyToken
+  verifyToken,
+  readCereri,
+  writeCereri,
+  addCerere,
+  updateCerere,
+  readProgramari,
+  writeProgramari,
+  addProgramare,
+  updateProgramare,
 };
 

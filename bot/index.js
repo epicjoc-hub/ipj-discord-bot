@@ -118,6 +118,64 @@ app.get('/user', (req, res) => {
   return res.json({ ok: true, user });
 });
 
+// Cereri Evenimente endpoints
+app.get('/cereri-evenimente', (req, res) => {
+  const expectedSecret = process.env.VERIFY_SECRET;
+  if (!expectedSecret || req.header('x-verify-secret') !== expectedSecret) {
+    return res.status(403).json({ ok: false, error: 'forbidden' });
+  }
+  const cereri = storage.readCereri();
+  return res.json(cereri);
+});
+
+app.post('/cereri-evenimente', (req, res) => {
+  const expectedSecret = process.env.VERIFY_SECRET;
+  if (!expectedSecret || req.header('x-verify-secret') !== expectedSecret) {
+    return res.status(403).json({ ok: false, error: 'forbidden' });
+  }
+  const cerere = storage.addCerere(req.body);
+  return res.json({ success: true, cerere });
+});
+
+app.put('/cereri-evenimente/:id', (req, res) => {
+  const expectedSecret = process.env.VERIFY_SECRET;
+  if (!expectedSecret || req.header('x-verify-secret') !== expectedSecret) {
+    return res.status(403).json({ ok: false, error: 'forbidden' });
+  }
+  const cerere = storage.updateCerere(req.params.id, req.body);
+  if (!cerere) return res.status(404).json({ ok: false, error: 'not_found' });
+  return res.json({ success: true, cerere });
+});
+
+// Programari Teste endpoints
+app.get('/programari-teste', (req, res) => {
+  const expectedSecret = process.env.VERIFY_SECRET;
+  if (!expectedSecret || req.header('x-verify-secret') !== expectedSecret) {
+    return res.status(403).json({ ok: false, error: 'forbidden' });
+  }
+  const programari = storage.readProgramari();
+  return res.json(programari);
+});
+
+app.post('/programari-teste', (req, res) => {
+  const expectedSecret = process.env.VERIFY_SECRET;
+  if (!expectedSecret || req.header('x-verify-secret') !== expectedSecret) {
+    return res.status(403).json({ ok: false, error: 'forbidden' });
+  }
+  const programare = storage.addProgramare(req.body);
+  return res.json({ success: true, programare });
+});
+
+app.put('/programari-teste/:id', (req, res) => {
+  const expectedSecret = process.env.VERIFY_SECRET;
+  if (!expectedSecret || req.header('x-verify-secret') !== expectedSecret) {
+    return res.status(403).json({ ok: false, error: 'forbidden' });
+  }
+  const programare = storage.updateProgramare(req.params.id, req.body);
+  if (!programare) return res.status(404).json({ ok: false, error: 'not_found' });
+  return res.json({ success: true, programare });
+});
+
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
   console.log(`HTTP server listening on port ${port}`);
