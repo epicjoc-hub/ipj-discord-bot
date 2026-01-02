@@ -25,6 +25,10 @@ dist/
 lib/
 src/
 
+# Allow Next.js app libs inside the site package
+!site/lib/
+!site/lib/**
+
 # Specific discord.js and dependencies
 discord.js/
 discord-api-types/
