@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: ipj-discord-bot
+    name: ipj_discord_bot
     env: node
     branch: main
     buildCommand: cd bot && npm install
