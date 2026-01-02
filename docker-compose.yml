@@ -1,0 +1,64 @@
+version: '3.8'
+
+services:
+  # Discord Bot API service
+  bot:
+    image: node:20-alpine
+    container_name: ipj-discord-bot
+    working_dir: /app/bot
+    volumes:
+      - ./:/app/bot
+      - ../ipj-ls-pr-bzone:/app/site
+    environment:
+      - NODE_ENV=development
+      - BOT_TOKEN=${BOT_TOKEN}
+      - VERIFY_SECRET=${VERIFY_SECRET}
+      - SITE_URL=http://site:3000
+      - PORT=3000
+    ports:
+      - "3000:3000"
+    command: sh -c "npm install && npm start"
+    networks:
+      - ipj-network
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:3000/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+  # Next.js Site service
+  site:
+    image: node:20-alpine
+    container_name: ipj-site
+    working_dir: /app/site
+    volumes:
+      - ../ipj-ls-pr-bzone:/app/site
+    environment:
+      - NODE_ENV=development
+      - VERIFY_SECRET=${VERIFY_SECRET}
+      - DISCORD_CLIENT_ID=${DISCORD_CLIENT_ID}
+      - DISCORD_CLIENT_SECRET=${DISCORD_CLIENT_SECRET}
+      - NEXT_PUBLIC_BOT_API_URL=http://bot:3000
+    ports:
+      - "3001:3000"
+    command: sh -c "npm install && npm run dev || npm run dev"
+    networks:
+      - ipj-network
+    depends_on:
+      bot:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:3000"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+networks:
+  ipj-network:
+    driver: bridge
+
+volumes:
+  bot-data:
+  site-data:
