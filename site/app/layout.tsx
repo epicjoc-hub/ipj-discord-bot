@@ -60,7 +60,6 @@ export default function RootLayout({
         <ThemeProvider
           attribute="data-theme"
           defaultTheme="dark"
-          forcedTheme="dark"
           enableSystem={false}
         >
           <div className="flex flex-col min-h-screen bg-[var(--background)] text-[var(--foreground)]">

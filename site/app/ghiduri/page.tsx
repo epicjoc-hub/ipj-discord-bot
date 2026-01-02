@@ -23,7 +23,7 @@ export default function GhiduriPage() {
   const [formData, setFormData] = useState({
     nume: '',
     prenume: '',
-    email: '',
+    discordTag: '',
     telefon: '',
     tipTest: '',
   });
@@ -40,6 +40,13 @@ export default function GhiduriPage() {
     setIsSubmitting(true);
     setSubmitStatus('idle');
 
+    const discordTagPattern = /^.{2,32}#\d{4}$/;
+    if (!discordTagPattern.test(formData.discordTag)) {
+      setIsSubmitting(false);
+      setSubmitStatus('error');
+      return;
+    }
+
     try {
       const response = await fetch('/api/programari-teste', {
         method: 'POST',
@@ -53,7 +60,7 @@ export default function GhiduriPage() {
 
       if (response.ok) {
         setSubmitStatus('success');
-        setFormData({ nume: '', prenume: '', email: '', telefon: '', tipTest: '' });
+        setFormData({ nume: '', prenume: '', discordTag: '', telefon: '', tipTest: '' });
         setTimeout(() => {
           setFormularDeschis(null);
           setSubmitStatus('idle');
@@ -162,14 +169,15 @@ export default function GhiduriPage() {
                     </div>
                     <div>
                       <label className="block text-sm font-semibold text-[var(--text-primary)] mb-2">
-                        Email *
+                          Discord Tag * (ex: Nume#1234)
                       </label>
                       <input
-                        type="email"
+                          type="text"
                         required
-                        value={formData.email}
-                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                          value={formData.discordTag}
+                          onChange={(e) => setFormData({ ...formData, discordTag: e.target.value })}
                         className="w-full px-4 py-3 border border-[var(--glass-border)] rounded-lg bg-[var(--glass-bg)] backdrop-filter backdrop-blur-sm text-[var(--text-primary)] focus:border-[var(--primary)] focus:outline-none transition-colors"
+                          placeholder="Utilizator#1234"
                       />
                     </div>
                     <div>

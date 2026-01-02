@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { motion } from 'framer-motion';
 
 export default function AdminDashboard() {
   const router = useRouter();
@@ -68,14 +69,15 @@ export default function AdminDashboard() {
   ];
 
   return (
-    <div className="min-h-screen bg-[var(--background)]">
-      <header className="glass-navbar border-b border-[var(--glass-border)]">
+    <div className="min-h-screen bg-gradient-to-br from-[var(--background)] via-[var(--background)] to-black/20">
+      <header className="glass-navbar border-b border-[var(--glass-border)] backdrop-blur-xl">
         <div className="container mx-auto px-4 py-4">
           <div className="flex justify-between items-center">
             <div>
-              <h1 className="text-2xl font-bold text-[var(--text-primary)]">Admin Panel</h1>
+              <p className="text-xs uppercase tracking-[0.2em] text-[var(--text-secondary)]">Admin IPJ</p>
+              <h1 className="text-3xl font-bold text-[var(--text-primary)]">Panou de Control</h1>
               <p className="text-sm text-[var(--text-secondary)]">
-                {adminUser && `${adminUser.grad} ${adminUser.nume}`}
+                {adminUser ? `${adminUser.grad} ${adminUser.nume}` : 'Utilizator' }
               </p>
             </div>
             <button
@@ -88,53 +90,67 @@ export default function AdminDashboard() {
         </div>
       </header>
 
-      <div className="container mx-auto px-4 py-12">
-        <div className="glass-card p-8 mb-8">
-          <h2 className="text-3xl font-bold text-[var(--text-primary)] mb-2">Panou de Control</h2>
-          <p className="text-base text-[var(--text-secondary)]">Selectați secțiunea pe care doriți să o gestionați</p>
-        </div>
-
-        {/* Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <div className="glass-card p-6 text-center">
-            <div className="text-4xl font-bold text-[var(--primary)] mb-2">
-              {stats.cereriPending}
-            </div>
-            <div className="text-sm text-[var(--text-secondary)]">Cereri în așteptare</div>
-          </div>
-          <div className="glass-card p-6 text-center">
-            <div className="text-4xl font-bold text-[var(--primary)] mb-2">
-              {stats.programariPending}
-            </div>
-            <div className="text-sm text-[var(--text-secondary)]">Programări în așteptare</div>
-          </div>
-          <div className="glass-card p-6 text-center">
-            <div className="text-4xl font-bold text-[var(--primary)] mb-2">{stats.anunturi}</div>
-            <div className="text-sm text-[var(--text-secondary)]">Anunțuri active</div>
+      <div className="container mx-auto px-4 py-12 space-y-8">
+        <div className="glass-card p-8 border border-[var(--glass-border)] relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-r from-[var(--primary)]/10 via-transparent to-[var(--accent)]/10 pointer-events-none" />
+          <div className="relative z-10 flex flex-col gap-3">
+            <h2 className="text-3xl font-bold text-[var(--text-primary)]">Bun venit în consolă</h2>
+            <p className="text-base text-[var(--text-secondary)]">Accesează rapid zonele cheie și monitorizează cererile și programările.</p>
           </div>
         </div>
 
-        {/* Menu Items */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {menuItems.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className="glass-card p-6 glass-hover block relative"
-            >
-              {item.badge && item.badge > 0 && (
-                <span className="absolute top-4 right-4 bg-[var(--accent-warning)] text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center">
-                  {item.badge}
-                </span>
-              )}
-              <div className="text-4xl mb-3">{item.icon}</div>
-              <h3 className="text-lg font-bold text-[var(--text-primary)] mb-2">{item.label}</h3>
-              <p className="text-sm text-[var(--text-secondary)]">Gestionare {item.label.toLowerCase()}</p>
-            </Link>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {[{
+            label: 'Cereri în așteptare',
+            value: stats.cereriPending,
+            icon: '📝',
+          }, {
+            label: 'Programări în așteptare',
+            value: stats.programariPending,
+            icon: '📚',
+          }, {
+            label: 'Anunțuri active',
+            value: stats.anunturi,
+            icon: '📢',
+          }].map((stat) => (
+            <div key={stat.label} className="glass-card p-6 border border-[var(--glass-border)] glass-hover">
+              <div className="flex items-start justify-between">
+                <div>
+                  <p className="text-sm text-[var(--text-secondary)]">{stat.label}</p>
+                  <div className="text-4xl font-bold text-[var(--primary)]">{stat.value}</div>
+                </div>
+                <span className="text-3xl">{stat.icon}</span>
+              </div>
+            </div>
           ))}
         </div>
 
-        <div className="mt-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {menuItems.map((item, idx) => (
+            <motion.div
+              key={item.href}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: idx * 0.03 }}
+            >
+              <Link
+                href={item.href}
+                className="glass-card p-6 glass-hover block relative border border-[var(--glass-border)]"
+              >
+                {item.badge && item.badge > 0 && (
+                  <span className="absolute top-4 right-4 bg-[var(--accent-warning)] text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center">
+                    {item.badge}
+                  </span>
+                )}
+                <div className="text-4xl mb-3">{item.icon}</div>
+                <h3 className="text-lg font-bold text-[var(--text-primary)] mb-1">{item.label}</h3>
+                <p className="text-sm text-[var(--text-secondary)]">Gestionare {item.label.toLowerCase()}</p>
+              </Link>
+            </motion.div>
+          ))}
+        </div>
+
+        <div className="pt-2">
           <Link
             href="/"
             target="_blank"

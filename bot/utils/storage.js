@@ -6,6 +6,7 @@ const TOKENS_FILE = path.join(__dirname, '../data/discord-tokens.json');
 const CERERI_FILE = path.join(__dirname, '../data/cereri-evenimente.json');
 const PROGRAMARI_FILE = path.join(__dirname, '../data/programari-teste.json');
 const ANUNTURI_FILE = path.join(__dirname, '../data/anunturi-evenimente.json');
+const ANUNTURI_POLITIE_FILE = path.join(__dirname, '../data/anunturi-politie.json');
 
 // Ensure data directory exists
 const dataDir = path.join(__dirname, '../data');
@@ -14,25 +15,18 @@ if (!fs.existsSync(dataDir)) {
 }
 
 // Initialize files if they don't exist
-if (!fs.existsSync(USERS_FILE)) {
-  fs.writeFileSync(USERS_FILE, JSON.stringify([], null, 2));
-}
+const ensureFile = (filePath) => {
+  if (!fs.existsSync(filePath)) {
+    fs.writeFileSync(filePath, JSON.stringify([], null, 2));
+  }
+};
 
-if (!fs.existsSync(TOKENS_FILE)) {
-  fs.writeFileSync(TOKENS_FILE, JSON.stringify([], null, 2));
-}
-
-if (!fs.existsSync(CERERI_FILE)) {
-  fs.writeFileSync(CERERI_FILE, JSON.stringify([], null, 2));
-}
-
-if (!fs.existsSync(PROGRAMARI_FILE)) {
- 
-
-if (!fs.existsSync(ANUNTURI_FILE)) {
-  fs.writeFileSync(ANUNTURI_FILE, JSON.stringify([], null, 2));
-} fs.writeFileSync(PROGRAMARI_FILE, JSON.stringify([], null, 2));
-}
+ensureFile(USERS_FILE);
+ensureFile(TOKENS_FILE);
+ensureFile(CERERI_FILE);
+ensureFile(PROGRAMARI_FILE);
+ensureFile(ANUNTURI_FILE);
+ensureFile(ANUNTURI_POLITIE_FILE);
 
 function readUsers() {
   try {
@@ -221,6 +215,7 @@ function addProgramare(programare) {
   const newProgramare = {
     id: Date.now().toString(),
     ...programare,
+    discordTag: programare?.discordTag ? String(programare.discordTag).trim() : undefined,
     status: 'pending',
     dataCreare: new Date().toISOString(),
   };
@@ -288,6 +283,55 @@ function deleteAnunt(id) {
   return filtered.length < anunturi.length;
 }
 
+// Anunturi Poliție
+function readAnunturiPolitie() {
+  try {
+    const data = fs.readFileSync(ANUNTURI_POLITIE_FILE, 'utf8');
+    return JSON.parse(data);
+  } catch (error) {
+    console.error('Error reading anunturi politie file:', error);
+    return [];
+  }
+}
+
+function writeAnunturiPolitie(anunturi) {
+  try {
+    fs.writeFileSync(ANUNTURI_POLITIE_FILE, JSON.stringify(anunturi, null, 2));
+    return true;
+  } catch (error) {
+    console.error('Error writing anunturi politie file:', error);
+    return false;
+  }
+}
+
+function addAnuntPolitie(anunt) {
+  const anunturi = readAnunturiPolitie();
+  const newAnunt = {
+    id: Date.now().toString(),
+    ...anunt,
+    status: anunt?.status || 'publicat',
+  };
+  anunturi.push(newAnunt);
+  writeAnunturiPolitie(anunturi);
+  return newAnunt;
+}
+
+function updateAnuntPolitie(id, updates) {
+  const anunturi = readAnunturiPolitie();
+  const index = anunturi.findIndex(a => a.id === id);
+  if (index === -1) return null;
+  anunturi[index] = { ...anunturi[index], ...updates };
+  writeAnunturiPolitie(anunturi);
+  return anunturi[index];
+}
+
+function deleteAnuntPolitie(id) {
+  const anunturi = readAnunturiPolitie();
+  const filtered = anunturi.filter(a => a.id !== id);
+  writeAnunturiPolitie(filtered);
+  return filtered.length < anunturi.length;
+}
+
 module.exports = {
   getUserByDiscordId,
   saveUser,
@@ -309,5 +353,10 @@ module.exports = {
   addAnunt,
   updateAnunt,
   deleteAnunt,
+  readAnunturiPolitie,
+  writeAnunturiPolitie,
+  addAnuntPolitie,
+  updateAnuntPolitie,
+  deleteAnuntPolitie,
 };
 

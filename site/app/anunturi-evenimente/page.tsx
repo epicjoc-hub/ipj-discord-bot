@@ -1,123 +1,98 @@
 'use client';
 
+import { useEffect, useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
-import anunturiData from '@/data/anunturi-evenimente.json';
+import { apiClient, type AnuntEveniment } from '@/lib/client-api';
+import { EmptyState } from '@/components/ui/EmptyState';
+import { LoadingSkeleton } from '@/components/ui/LoadingSkeleton';
 
 export default function AnunturiEvenimentePage() {
+  const [anunturi, setAnunturi] = useState<AnuntEveniment[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let mounted = true;
+    const load = async () => {
+      try {
+        const data = await apiClient.getAnunturiEvenimente();
+        if (mounted) setAnunturi(data || []);
+      } catch (err) {
+        console.error(err);
+        if (mounted) setError('Nu am putut încărca anunțurile.');
+      } finally {
+        if (mounted) setLoading(false);
+      }
+    };
+    load();
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  const aprobate = useMemo(() => anunturi.filter((a) => a.status === 'aprobat').length, [anunturi]);
+  const inAsteptare = useMemo(() => anunturi.filter((a) => a.status !== 'aprobat').length, [anunturi]);
+
   const containerVariants = {
     hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-        duration: 0.3,
-      },
-    },
+    visible: { opacity: 1, transition: { staggerChildren: 0.08, duration: 0.3 } },
   };
 
   const itemVariants = {
     hidden: { y: 20, opacity: 0 },
-    visible: {
-      y: 0,
-      opacity: 1,
-      transition: { duration: 0.3 },
-    },
+    visible: { y: 0, opacity: 1, transition: { duration: 0.3 } },
   };
-
-  const aprobate = anunturiData.filter(a => a.status === 'aprobat').length;
-  const inAsteptare = anunturiData.filter(a => a.status === 'in asteptare').length;
 
   return (
     <div className="py-12 min-h-screen bg-[var(--background)]">
-      <div className="container mx-auto px-4">
-        {/* Header Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mb-12"
-        >
-          <div className="glass-card p-8 text-center">
-            <h1 className="text-4xl font-bold text-[var(--text-primary)] mb-4">
-              Anunțuri Evenimente
-            </h1>
-            <p className="text-lg text-[var(--text-secondary)] max-w-2xl mx-auto">
-              Rămâneți la curent cu evenimentele aprobate din comunitate
-            </p>
-          </div>
+      <div className="container mx-auto px-4 space-y-10">
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="glass-card p-10 text-center border border-[var(--glass-border)]">
+          <p className="text-xs uppercase tracking-[0.25em] text-[var(--text-secondary)] mb-3">Flux live</p>
+          <h1 className="text-4xl font-bold text-[var(--text-primary)] mb-3">Anunțuri Evenimente</h1>
+          <p className="text-base text-[var(--text-secondary)] max-w-2xl mx-auto">
+            Toate evenimentele aprobate sunt încărcate exclusiv din API-ul botului. Niciun conținut hardcodat.
+          </p>
         </motion.div>
 
-        {/* Stats Bar */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12"
-        >
-          <div className="glass-card p-6 text-center">
-            <div className="text-3xl font-bold text-[var(--primary)] mb-2">{anunturiData.length}</div>
-            <div className="text-sm text-[var(--text-secondary)]">Total Evenimente</div>
-          </div>
-          <div className="glass-card p-6 text-center">
-            <div className="text-3xl font-bold text-[var(--accent)] mb-2">{aprobate}</div>
-            <div className="text-sm text-[var(--text-secondary)]">Aprobate</div>
-          </div>
-          <div className="glass-card p-6 text-center">
-            <div className="text-3xl font-bold text-[var(--accent-warning)] mb-2">{inAsteptare}</div>
-            <div className="text-sm text-[var(--text-secondary)]">În Așteptare</div>
-          </div>
-        </motion.div>
-
-        {/* Main Content - Dashboard List */}
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          animate="visible"
-          className="space-y-6"
-        >
-          {anunturiData.map((anunt) => (
-            <motion.div
-              key={anunt.id}
-              variants={itemVariants}
-              className="glass-card p-6 glass-hover"
-            >
-              <div className="flex items-start justify-between mb-4">
-                <div className="flex-1">
-                  <h3 className="text-2xl font-bold text-[var(--text-primary)] mb-3">
-                    {anunt.titlu}
-                  </h3>
-                  <div className="flex flex-wrap gap-4 text-sm text-[var(--text-secondary)] mb-3">
-                    <span className="flex items-center gap-1">
-                      📅 {new Date(anunt.data).toLocaleDateString('ro-RO')}
-                    </span>
-                    <span className="flex items-center gap-1">
-                      🕐 {anunt.ora}
-                    </span>
-                    <span className="flex items-center gap-1">
-                      📍 {anunt.locatie}
-                    </span>
-                  </div>
-                </div>
-                <span
-                  className={`px-4 py-2 rounded-full text-xs font-semibold flex-shrink-0 ${
-                    anunt.status === 'aprobat'
-                      ? 'bg-[var(--accent)]/20 text-[var(--accent)]'
-                      : 'bg-[var(--accent-warning)]/20 text-[var(--accent-warning)]'
-                  }`}
-                >
-                  {anunt.status === 'aprobat' ? '✓ Aprobat' : '⏳ În așteptare'}
-                </span>
-              </div>
-              <p className="text-[var(--text-secondary)] leading-relaxed">{anunt.descriere}</p>
-            </motion.div>
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {[{ label: 'Total', value: anunturi.length, color: 'text-[var(--primary)]' }, { label: 'Aprobate', value: aprobate, color: 'text-[var(--accent)]' }, { label: 'În așteptare', value: inAsteptare, color: 'text-[var(--accent-warning)]' }].map((stat) => (
+            <div key={stat.label} className="glass-card p-5 text-center border border-[var(--glass-border)]">
+              <div className={`text-3xl font-bold ${stat.color}`}>{stat.value}</div>
+              <div className="text-sm text-[var(--text-secondary)]">{stat.label}</div>
+            </div>
           ))}
         </motion.div>
 
-        {anunturiData.length === 0 && (
-          <div className="glass-card p-12 text-center">
-            <p className="text-[var(--text-secondary)] text-lg">
-              Nu există anunțuri de evenimente momentan.
-            </p>
+        {loading ? (
+          <div className="space-y-3">
+            <LoadingSkeleton lines={5} />
+            <LoadingSkeleton lines={5} />
           </div>
+        ) : error ? (
+          <EmptyState title="Eroare" description={error} icon="⚠️" />
+        ) : anunturi.length === 0 ? (
+          <EmptyState />
+        ) : (
+          <motion.div variants={containerVariants} initial="hidden" animate="visible" className="space-y-4">
+            {anunturi.map((anunt) => (
+              <motion.div key={anunt.id} variants={itemVariants} className="glass-card p-6 border border-[var(--glass-border)] glass-hover">
+                <div className="flex flex-wrap items-start justify-between gap-4 mb-3">
+                  <div className="space-y-2">
+                    <h3 className="text-2xl font-semibold text-[var(--text-primary)]">{anunt.titlu}</h3>
+                    <div className="flex flex-wrap gap-3 text-sm text-[var(--text-secondary)]">
+                      {anunt.data && <span>📅 {new Date(anunt.data).toLocaleDateString('ro-RO')}</span>}
+                      {anunt.ora && <span>🕑 {anunt.ora}</span>}
+                      {anunt.locatie && <span>📍 {anunt.locatie}</span>}
+                    </div>
+                  </div>
+                  <span className={`px-4 py-2 rounded-full text-xs font-semibold border ${anunt.status === 'aprobat' ? 'bg-[var(--primary)]/15 text-[var(--primary)] border-[var(--primary)]/40' : 'bg-[var(--accent-warning)]/15 text-[var(--accent-warning)] border-[var(--accent-warning)]/50'}`}>
+                    {anunt.status === 'aprobat' ? 'Aprobat' : 'În așteptare'}
+                  </span>
+                </div>
+                <p className="text-[var(--text-secondary)] leading-relaxed">{anunt.descriere}</p>
+              </motion.div>
+            ))}
+          </motion.div>
         )}
       </div>
     </div>

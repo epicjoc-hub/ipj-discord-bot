@@ -19,6 +19,8 @@ export default function AdminProgramariTeste() {
   const [telefon, setTelefon] = useState('');
   const [grad, setGrad] = useState('');
   const [nume, setNume] = useState('');
+  const [sendingId, setSendingId] = useState<string | null>(null);
+  const [toast, setToast] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
 
   useEffect(() => {
     const auth = sessionStorage.getItem('admin_authenticated');
@@ -84,6 +86,74 @@ export default function AdminProgramariTeste() {
   const programariPending = programari.filter((p) => p.status === 'pending');
   const programariScheduled = programari.filter((p) => p.status === 'scheduled');
 
+  const buildEmail = (programare: any) => {
+    const now = new Date();
+    const greeting = now.getHours() >= 18 ? 'Bună seara' : 'Bună ziua';
+    const solicitant = `${programare.prenume} ${programare.nume}`.trim();
+    const dataGenerarii = now.toLocaleDateString('ro-RO');
+    const dataTestStr = programare.dataTest
+      ? new Date(programare.dataTest).toLocaleDateString('ro-RO')
+      : '—';
+
+    return [
+      '📧 MODEL E-MAIL',
+      '',
+      '📤 Expeditor: relatiipublice@ipjbz.ro',
+      `📅 Data: ${dataGenerarii}`,
+      `📎 Către: ${solicitant} @ Discord (${programare.discordTag || 'fără tag'})`,
+      '📌 Subiect: APROBARE PROGRAMARE',
+      '-------------------------------------------------------------',
+      '',
+      'Mesaj:',
+      `${greeting}, ${solicitant},`,
+      '',
+      `Programarea pentru testul "${programare.tipTest}" a fost CONFIRMATĂ.`,
+      `📅 Data: ${dataTestStr}`,
+      `🕐 Ora: ${programare.oraTest || '—'}`,
+      `📞 Contact: ${programare.telefon || '—'}`,
+      '',
+      'Vă rugăm să vă prezentați cu 10 minute înainte pentru formalități.',
+      '',
+      '-------------------------------------------------------------',
+      '',
+      'Cu stimă,',
+      `${grad} ${nume}`.trim(),
+      'Biroul Relații Publice',
+      '',
+      '🔁 Răspunde | ➡️ Redirecționează',
+    ].join('\n');
+  };
+
+  const sendMail = async (programare: any) => {
+    if (!programare?.discordTag) {
+      setToast({ type: 'error', message: 'Discord Tag lipsă. Nu putem trimite mesajul.' });
+      return;
+    }
+
+    setSendingId(programare.id);
+    setToast(null);
+
+    try {
+      const emailContent = buildEmail(programare);
+      const res = await fetch('/api/discord/notify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ discordTag: programare.discordTag, message: emailContent }),
+      });
+
+      if (!res.ok) {
+        throw new Error('Nu am putut trimite mesajul.');
+      }
+
+      setToast({ type: 'success', message: 'Mesaj trimis cu succes către Discord.' });
+    } catch (error) {
+      console.error(error);
+      setToast({ type: 'error', message: 'Trimiterea a eșuat. Verifică Discord Tag-ul.' });
+    } finally {
+      setSendingId(null);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-[var(--background)]">
       <header className="glass-navbar sticky top-0 z-40">
@@ -127,7 +197,7 @@ export default function AdminProgramariTeste() {
                         <strong>Nume:</strong> {programare.prenume} {programare.nume}
                       </p>
                       <p>
-                        <strong>Email:</strong> {programare.email}
+                        <strong>Discord Tag:</strong> {programare.discordTag || '—'}
                       </p>
                       <p>
                         <strong>Telefon:</strong> {programare.telefon}
@@ -192,77 +262,43 @@ export default function AdminProgramariTeste() {
                 </div>
                 <div className="mt-4 p-4 bg-[var(--hover-bg)] rounded-[var(--radius-md)] border border-[var(--glass-border)]">
                   <div className="flex justify-between items-center mb-2">
-                    <h4 className="font-semibold text-[var(--text-primary)]">📧 Model E-mail</h4>
-                    <button
-                      onClick={() => {
-                        const email = `${programare.nume.toLowerCase()}.${programare.prenume.toLowerCase()}@bzone.ro`;
-                        const data = new Date().toLocaleDateString('ro-RO');
-                        const dataTest = new Date(programare.dataTest).toLocaleDateString('ro-RO');
-                        const emailContent = `📧 MODEL E-MAIL
-
-📤 Expeditor: relatiipublice@ipjbz.ro
-📅 Data: ${data}
-📎 Către: ${email}
-📌 Subiect: PROGRAMARE TEST ${programare.tipTest}
-
--------------------------------------------------------------
-
-Mesaj:
-
-Testarea dvs. pentru ${programare.tipTest} a fost programată pentru:
-📅 Data: ${dataTest}
-🕐 Ora: ${programare.oraTest}
-📞 Contact: ${programare.telefon}
-
-Vă rugăm să vă prezentați la timp.
-
--------------------------------------------------------------
-
-Cu stimă,
-${programare.grad} ${programare.nume}
-Biroul Relații Publice
-
-🔁 Răspunde | ➡️ Redirecționează`;
-                        navigator.clipboard.writeText(emailContent);
-                        alert('Email copiat în clipboard!');
-                      }}
-                      className="bg-[var(--primary)] text-white px-4 py-2 rounded-[var(--radius-md)] hover:bg-[var(--primary-hover)] font-semibold text-sm"
-                    >
-                      📋 Copiază Email
-                    </button>
+                    <h4 className="font-semibold text-[var(--text-primary)]">📧 Previzualizare mesaj</h4>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => sendMail(programare)}
+                        disabled={sendingId === programare.id}
+                        className="bg-[var(--primary)] text-white px-4 py-2 rounded-[var(--radius-md)] hover:bg-[var(--primary-hover)] font-semibold text-sm disabled:opacity-60"
+                      >
+                        {sendingId === programare.id ? 'Se trimite...' : 'Trimite mail'}
+                      </button>
+                      <button
+                        onClick={() => navigator.clipboard.writeText(buildEmail(programare))}
+                        className="glass-card px-4 py-2 rounded-[var(--radius-md)] font-semibold text-sm border border-[var(--glass-border)]"
+                      >
+                        📋 Copiază
+                      </button>
+                    </div>
                   </div>
                   <pre className="text-xs bg-[var(--glass-bg)] p-3 rounded-[var(--radius-md)] border border-[var(--glass-border)] overflow-x-auto whitespace-pre-wrap">
-{`📧 MODEL E-MAIL
-
-📤 Expeditor: relatiipublice@ipjbz.ro
-📅 Data: ${new Date().toLocaleDateString('ro-RO')}
-📎 Către: ${programare.nume.toLowerCase()}.${programare.prenume.toLowerCase()}@bzone.ro
-📌 Subiect: PROGRAMARE TEST ${programare.tipTest}
-
--------------------------------------------------------------
-
-Mesaj:
-
-Testarea dvs. pentru ${programare.tipTest} a fost programată pentru:
-📅 Data: ${new Date(programare.dataTest).toLocaleDateString('ro-RO')}
-🕐 Ora: ${programare.oraTest}
-📞 Contact: ${programare.telefon}
-
-Vă rugăm să vă prezentați la timp.
-
--------------------------------------------------------------
-
-Cu stimă,
-${programare.grad} ${programare.nume}
-Biroul Relații Publice
-
-🔁 Răspunde | ➡️ Redirecționează`}
+{buildEmail(programare)}
                   </pre>
                 </div>
               </motion.div>
             ))}
           </div>
         </div>
+
+        {toast && (
+          <div
+            className={`fixed bottom-4 right-4 px-4 py-3 rounded-[var(--radius-md)] shadow-lg border ${
+              toast.type === 'success'
+                ? 'bg-[var(--primary)]/15 border-[var(--primary)]/40 text-[var(--text-primary)]'
+                : 'bg-[var(--accent)]/15 border-[var(--accent)]/40 text-[var(--text-primary)]'
+            }`}
+          >
+            {toast.message}
+          </div>
+        )}
 
         {/* Calendar Modal */}
         <AnimatePresence>

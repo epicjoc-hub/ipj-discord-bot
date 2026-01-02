@@ -13,6 +13,8 @@ export default function AdminCereriEvenimente() {
   const [selectedCerere, setSelectedCerere] = useState<any>(null);
   const [actionModal, setActionModal] = useState<'aprobare' | 'respingere' | null>(null);
   const [mesaj, setMesaj] = useState('');
+  const [sendingId, setSendingId] = useState<string | null>(null);
+  const [toast, setToast] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
 
   useEffect(() => {
     const auth = sessionStorage.getItem('admin_authenticated');
@@ -38,23 +40,85 @@ export default function AdminCereriEvenimente() {
     }
   };
 
-  const handleAction = async () => {
+  const buildEmail = (cerere: any, actiune: 'aprobare' | 'respingere', customMessage?: string) => {
+    const now = new Date();
+    const greeting = now.getHours() >= 18 ? 'Bună seara' : 'Bună ziua';
+    const solicitant = `${cerere.prenume} ${cerere.nume}`.trim();
+    const dataGenerarii = now.toLocaleDateString('ro-RO');
+    const dataEveniment = cerere.data ? new Date(cerere.data).toLocaleDateString('ro-RO') : '—';
+    const corpMesaj =
+      customMessage?.trim() ||
+      (actiune === 'aprobare'
+        ? `Cererea pentru evenimentul "${cerere.tipEveniment === 'Altul' ? cerere.tipCustom : cerere.tipEveniment}" a fost APROBATĂ.\n📅 Data: ${dataEveniment} \n🕑 Ora: ${cerere.ora || '—'}\n📍 Locație: ${cerere.locatie || 'Los Santos'}\n\nVă rugăm să respectați indicațiile primite și să colaborați cu echipajele desemnate.`
+        : `Cererea pentru evenimentul "${cerere.tipEveniment === 'Altul' ? cerere.tipCustom : cerere.tipEveniment}" a fost RESPINSĂ.\nMotiv: ${customMessage || 'Neconformități identificate în documentație.'}`);
+
+    return [
+      '📧 MODEL E-MAIL',
+      '',
+      '📤 Expeditor: relatiipublice@ipjbz.ro',
+      `📅 Data: ${dataGenerarii}`,
+      `📎 Către: ${solicitant} @ Discord (${cerere.discordTag || 'fără tag'})`,
+      `📌 Subiect: ${actiune === 'aprobare' ? 'APROBARE' : 'RESPINGERE'} EVENIMENT`,
+      '-------------------------------------------------------------',
+      '',
+      'Mesaj:',
+      `${greeting}, ${solicitant},`,
+      '',
+      corpMesaj,
+      '',
+      '-------------------------------------------------------------',
+      '',
+      'Cu stimă,',
+      `${adminUser?.grad || ''} ${adminUser?.nume || 'Admin'}`.trim(),
+      'Biroul Relații Publice',
+      '',
+      '🔁 Răspunde | ➡️ Redirecționează',
+    ].join('\n');
+  };
+
+  const sendMail = async (cerere: any, actiune: 'aprobare' | 'respingere', mesajCurent?: string) => {
+    if (!cerere?.discordTag) {
+      setToast({ type: 'error', message: 'Discord Tag lipsește pentru această cerere.' });
+      return;
+    }
+
+    setSendingId(cerere.id);
+    setToast(null);
+
+    try {
+      const emailContent = buildEmail(cerere, actiune, mesajCurent || mesaj);
+      const res = await fetch('/api/discord/notify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ discordTag: cerere.discordTag, message: emailContent }),
+      });
+
+      if (!res.ok) throw new Error('Eroare la trimiterea mesajului');
+
+      setToast({ type: 'success', message: 'Mesaj trimis cu succes către Discord.' });
+    } catch (error) {
+      console.error(error);
+      setToast({ type: 'error', message: 'Nu am putut trimite mesajul. Verifică Discord Tag-ul.' });
+    } finally {
+      setSendingId(null);
+    }
+  };
+
+  const handleAction = async (shouldNotify = false) => {
     if (!selectedCerere || !actionModal || !mesaj.trim()) return;
 
     try {
-      const response = await fetch(
-        `/api/cereri-evenimente/${selectedCerere.id}/${actionModal}`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            mesaj,
-            adminUser,
-          }),
-        }
-      );
+      const cerereCurenta = selectedCerere;
+      const response = await fetch(`/api/cereri-evenimente/${cerereCurenta.id}/${actionModal}` ,{
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ mesaj, adminUser }),
+      });
 
       if (response.ok) {
+        if (shouldNotify) {
+          await sendMail(cerereCurenta, actionModal, mesaj);
+        }
         setActionModal(null);
         setSelectedCerere(null);
         setMesaj('');
@@ -217,65 +281,40 @@ export default function AdminCereriEvenimente() {
                   </div>
                 )}
                 {cerere.status !== 'pending' && cerere.istoric && cerere.istoric.length > 0 && (
-                  <div className="mt-4 p-4 bg-[var(--hover-bg)] rounded-[var(--radius-md)] border border-[var(--glass-border)]">
-                    <div className="flex justify-between items-center mb-2">
-                      <h4 className="font-semibold text-[var(--text-primary)]">📧 Model E-mail</h4>
-                      <button
-                        onClick={() => {
-                          const istoric = cerere.istoric[cerere.istoric.length - 1];
-                          const email = `${cerere.nume.toLowerCase()}.${cerere.prenume.toLowerCase()}@bzone.ro`;
-                          const data = new Date().toLocaleDateString('ro-RO');
-                          const subiect = cerere.status === 'approved' ? 'APROBARE' : 'RESPINGERE';
-                          const emailContent = `📧 MODEL E-MAIL
-
-📤 Expeditor: relatiipublice@ipjbz.ro
-📅 Data: ${data}
-📎 Către: ${email}
-📌 Subiect: ${subiect} CERERE EVENIMENT
-
--------------------------------------------------------------
-
-Mesaj:
-
-${istoric.mesaj || (cerere.status === 'approved' ? 'Cererea dvs. pentru eveniment a fost aprobată.' : 'Cererea dvs. pentru eveniment a fost respinsă.')}
-
--------------------------------------------------------------
-
-Cu stimă,
-${istoric.admin.grad} ${istoric.admin.nume}
-Biroul Relații Publice
-
-🔁 Răspunde | ➡️ Redirecționează`;
-                          navigator.clipboard.writeText(emailContent);
-                          alert('Email copiat în clipboard!');
-                        }}
-                        className="bg-[var(--primary)] text-white px-4 py-2 rounded-[var(--radius-md)] hover:bg-[var(--primary-hover)] font-semibold text-sm"
-                      >
-                        📋 Copiază Email
-                      </button>
+                  <div className="mt-4 p-4 bg-[var(--hover-bg)] rounded-[var(--radius-md)] border border-[var(--glass-border)] space-y-3">
+                    <div className="flex justify-between items-center">
+                      <h4 className="font-semibold text-[var(--text-primary)]">📧 Previzualizare mesaj</h4>
+                      <div className="flex gap-2">
+                        {(() => {
+                          const lastEntry = cerere.istoric[cerere.istoric.length - 1];
+                          return (
+                            <>
+                              <button
+                                onClick={() => sendMail(cerere, cerere.status === 'approved' ? 'aprobare' : 'respingere', lastEntry?.mesaj)}
+                                disabled={sendingId === cerere.id}
+                                className="bg-[var(--primary)] text-white px-4 py-2 rounded-[var(--radius-md)] hover:bg-[var(--primary-hover)] font-semibold text-sm disabled:opacity-60"
+                              >
+                                {sendingId === cerere.id ? 'Se trimite...' : 'Trimite mail'}
+                              </button>
+                              <button
+                                onClick={() => navigator.clipboard.writeText(buildEmail(cerere, cerere.status === 'approved' ? 'aprobare' : 'respingere', lastEntry?.mesaj))}
+                                className="glass-card px-4 py-2 rounded-[var(--radius-md)] font-semibold text-sm border border-[var(--glass-border)]"
+                              >
+                                📋 Copiază
+                              </button>
+                            </>
+                          );
+                        })()}
+                      </div>
                     </div>
-                    <pre className="text-xs bg-[var(--glass-bg)] p-3 rounded-[var(--radius-md)] border border-[var(--glass-border)] overflow-x-auto whitespace-pre-wrap">
-{`📧 MODEL E-MAIL
-
-📤 Expeditor: relatiipublice@ipjbz.ro
-📅 Data: ${new Date().toLocaleDateString('ro-RO')}
-📎 Către: ${cerere.nume.toLowerCase()}.${cerere.prenume.toLowerCase()}@bzone.ro
-📌 Subiect: ${cerere.status === 'approved' ? 'APROBARE' : 'RESPINGERE'} CERERE EVENIMENT
-
--------------------------------------------------------------
-
-Mesaj:
-
-${cerere.istoric[cerere.istoric.length - 1]?.mesaj || (cerere.status === 'approved' ? 'Cererea dvs. pentru eveniment a fost aprobată.' : 'Cererea dvs. pentru eveniment a fost respinsă.')}
-
--------------------------------------------------------------
-
-Cu stimă,
-${cerere.istoric[cerere.istoric.length - 1]?.admin?.grad} ${cerere.istoric[cerere.istoric.length - 1]?.admin?.nume}
-Biroul Relații Publice
-
-🔁 Răspunde | ➡️ Redirecționează`}
-                    </pre>
+                    {(() => {
+                      const lastEntry = cerere.istoric[cerere.istoric.length - 1];
+                      return (
+                        <pre className="text-xs bg-[var(--glass-bg)] p-3 rounded-[var(--radius-md)] border border-[var(--glass-border)] overflow-x-auto whitespace-pre-wrap">
+{buildEmail(cerere, cerere.status === 'approved' ? 'aprobare' : 'respingere', lastEntry?.mesaj)}
+                        </pre>
+                      );
+                    })()}
                   </div>
                 )}
               </motion.div>
@@ -319,17 +358,20 @@ Biroul Relații Publice
                     placeholder="Introduceți mesajul pentru organizator..."
                   />
                 </div>
-                <div className="flex gap-4">
+                <div className="flex gap-3">
                   <button
-                    onClick={handleAction}
+                    onClick={() => handleAction()}
                     disabled={!mesaj.trim()}
-                    className={`flex-1 py-2 px-4 rounded-lg font-semibold ${
-                      actionModal === 'aprobare'
-                        ? 'bg-[var(--primary)] text-white hover:bg-[var(--primary-hover)]'
-                        : 'bg-[var(--accent)] text-white hover:bg-[var(--accent-hover)]'
-                    } disabled:opacity-50`}
+                    className={`flex-1 py-2 px-4 rounded-lg font-semibold ${actionModal === 'aprobare' ? 'bg-[var(--primary)] text-white hover:bg-[var(--primary-hover)]' : 'bg-[var(--accent)] text-white hover:bg-[var(--accent-hover)]'} disabled:opacity-50`}
                   >
                     Confirmă
+                  </button>
+                  <button
+                    onClick={() => handleAction(true)}
+                    disabled={!mesaj.trim() || sendingId === selectedCerere?.id}
+                    className="flex-1 py-2 px-4 rounded-lg font-semibold bg-[var(--primary)]/15 text-[var(--text-primary)] border border-[var(--primary)]/30 hover:bg-[var(--primary)]/25 disabled:opacity-50"
+                  >
+                    {sendingId === selectedCerere?.id ? 'Se trimite...' : 'Trimite mail'}
                   </button>
                   <button
                     onClick={() => {
@@ -346,6 +388,18 @@ Biroul Relații Publice
             </motion.div>
           )}
         </AnimatePresence>
+
+        {toast && (
+          <div
+            className={`fixed bottom-4 right-4 px-4 py-3 rounded-[var(--radius-md)] shadow-lg border ${
+              toast.type === 'success'
+                ? 'bg-[var(--primary)]/15 border-[var(--primary)]/40 text-[var(--text-primary)]'
+                : 'bg-[var(--accent)]/15 border-[var(--accent)]/40 text-[var(--text-primary)]'
+            }`}
+          >
+            {toast.message}
+          </div>
+        )}
       </div>
     </div>
   );

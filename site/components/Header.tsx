@@ -4,6 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import ThemeToggle from './ThemeToggle';
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -13,7 +14,7 @@ export default function Header() {
     { href: '/anunturi-evenimente', label: 'Anunțuri Evenimente' },
     { href: '/anunturi-politie', label: 'Anunțuri Poliție' },
     { href: '/cerere-eveniment', label: 'Cerere Eveniment' },
-    { href: '/ghiduri', label: 'Ghid-uri' },
+    { href: '/ghiduri', label: 'Programări' },
   ];
 
   return (
@@ -53,10 +54,12 @@ export default function Header() {
                 <span className="absolute bottom-1 left-1/2 transform -translate-x-1/2 w-0 h-0.5 bg-[var(--primary)] transition-all group-hover:w-3/4 rounded-full"></span>
               </Link>
             ))}
+            <ThemeToggle />
           </nav>
 
           {/* Mobile Menu Button & Theme Toggle */}
-          <div className="lg:hidden flex items-center">
+          <div className="lg:hidden flex items-center gap-2">
+            <ThemeToggle />
             <button
               className="p-2 text-[var(--text-primary)] hover:bg-[var(--hover-bg)] rounded-lg transition-colors"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -108,6 +111,7 @@ export default function Header() {
                   {item.label}
                 </Link>
               ))}
+              <div className="px-4 pt-2"><ThemeToggle /></div>
             </motion.nav>
           )}
         </AnimatePresence>

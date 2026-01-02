@@ -11,6 +11,8 @@ export default function AdminAnunturiPolitie() {
   const [anunturi, setAnunturi] = useState<any[]>([]);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [formData, setFormData] = useState<any>({});
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const auth = sessionStorage.getItem('admin_authenticated');
@@ -24,23 +26,55 @@ export default function AdminAnunturiPolitie() {
 
   const loadAnunturi = async () => {
     try {
-      const response = await fetch('/data/anunturi-politie.json');
+      const response = await fetch('/api/anunturi-politie', { cache: 'no-store' });
+      if (!response.ok) throw new Error('Eroare la încărcare');
       const data = await response.json();
       setAnunturi(data);
+      setError(null);
     } catch (error) {
       console.error('Error loading anunturi:', error);
+      setError('Nu am putut încărca anunțurile.');
     }
   };
 
-  const handleSave = () => {
-    if (editingId) {
-      const updated = anunturi.map((a) =>
-        a.id === editingId ? { ...a, ...formData } : a
-      );
-      setAnunturi(updated);
+  const handleSave = async () => {
+    if (!editingId) return;
+
+    setSaving(true);
+    setError(null);
+
+    const payload = {
+      ...formData,
+      ['conținut']: formData['conținut'] || formData.continut || '',
+    };
+
+    try {
+      if (editingId === 'new') {
+        const response = await fetch('/api/anunturi-politie', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+
+        if (!response.ok) throw new Error('Eroare la creare');
+      } else {
+        const response = await fetch(`/api/anunturi-politie/${editingId}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+
+        if (!response.ok) throw new Error('Eroare la salvare');
+      }
+
       setEditingId(null);
       setFormData({});
-      alert('Modificările au fost salvate!');
+      await loadAnunturi();
+    } catch (err) {
+      console.error(err);
+      setError('Nu am putut salva anunțul.');
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -68,6 +102,11 @@ export default function AdminAnunturiPolitie() {
       </header>
 
       <div className="container mx-auto px-4 py-8">
+        {error && (
+          <div className="mb-4 bg-[var(--accent)]/10 text-[var(--text-primary)] border border-[var(--accent)]/30 px-4 py-3 rounded-[var(--radius-md)]">
+            {error}
+          </div>
+        )}
         {editingId ? (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -113,9 +152,10 @@ export default function AdminAnunturiPolitie() {
               <div className="flex gap-4">
                 <button
                   onClick={handleSave}
-                  className="bg-[var(--primary)] text-white px-6 py-2 rounded-lg font-semibold hover:bg-[var(--primary-hover)]"
+                  disabled={saving}
+                  className="bg-[var(--primary)] text-white px-6 py-2 rounded-lg font-semibold hover:bg-[var(--primary-hover)] disabled:opacity-60"
                 >
-                  Salvează
+                  {saving ? 'Se salvează...' : 'Salvează'}
                 </button>
                 <button
                   onClick={() => {
@@ -133,14 +173,12 @@ export default function AdminAnunturiPolitie() {
           <div className="mb-6">
             <button
               onClick={() => {
-                const newId = Date.now().toString();
-                setEditingId(newId);
+                setEditingId('new');
                 setFormData({
-                  id: newId,
                   categorie: 'Comunicate',
                   titlu: '',
                   data: new Date().toISOString().split('T')[0],
-                  conținut: '',
+                  ['conținut']: '',
                   prioritate: 'normal',
                 });
               }}
@@ -174,7 +212,7 @@ export default function AdminAnunturiPolitie() {
                   </span>
                   <h3 className="text-xl font-bold text-[var(--text-primary)]">{anunt.titlu}</h3>
                   <p className="text-[var(--text-secondary)] mt-2 whitespace-pre-line">
-                    {anunt.conținut}
+                    {anunt['conținut']}
                   </p>
                 </div>
                 <button

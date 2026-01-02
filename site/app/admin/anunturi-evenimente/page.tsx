@@ -11,6 +11,8 @@ export default function AdminAnunturiEvenimente() {
   const [anunturi, setAnunturi] = useState<any[]>([]);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [formData, setFormData] = useState<any>({});
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const auth = sessionStorage.getItem('admin_authenticated');
@@ -24,23 +26,54 @@ export default function AdminAnunturiEvenimente() {
 
   const loadAnunturi = async () => {
     try {
-      const response = await fetch('/data/anunturi-evenimente.json');
+      const response = await fetch('/api/anunturi-evenimente', { cache: 'no-store' });
+      if (!response.ok) throw new Error('Eroare la încărcare');
       const data = await response.json();
       setAnunturi(data);
+      setError(null);
     } catch (error) {
       console.error('Error loading anunturi:', error);
+      setError('Nu am putut încărca anunțurile.');
     }
   };
 
-  const handleSave = () => {
-    if (editingId) {
-      const updated = anunturi.map((a) =>
-        a.id === editingId ? { ...a, ...formData } : a
-      );
-      setAnunturi(updated);
+  const handleSave = async () => {
+    if (!editingId) return;
+
+    setSaving(true);
+    setError(null);
+
+    const payload = {
+      ...formData,
+    };
+
+    try {
+      if (editingId === 'new') {
+        const response = await fetch('/api/anunturi-evenimente', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+
+        if (!response.ok) throw new Error('Eroare la creare');
+      } else {
+        const response = await fetch(`/api/anunturi-evenimente/${editingId}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+
+        if (!response.ok) throw new Error('Eroare la salvare');
+      }
+
       setEditingId(null);
       setFormData({});
-      alert('Modificările au fost salvate!');
+      await loadAnunturi();
+    } catch (err) {
+      console.error(err);
+      setError('Nu am putut salva anunțul.');
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -68,6 +101,11 @@ export default function AdminAnunturiEvenimente() {
       </header>
 
       <div className="container mx-auto px-4 py-8">
+        {error && (
+          <div className="mb-4 bg-[var(--accent)]/10 text-[var(--text-primary)] border border-[var(--accent)]/30 px-4 py-3 rounded-[var(--radius-md)]">
+            {error}
+          </div>
+        )}
         {editingId ? (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -100,10 +138,11 @@ export default function AdminAnunturiEvenimente() {
               ))}
               <div className="flex gap-4">
                 <button
-                  onClick={handleSave}
-                  className="bg-[var(--primary)] text-white px-6 py-2 rounded-lg font-semibold hover:bg-[var(--primary-hover)]"
+                    onClick={handleSave}
+                    disabled={saving}
+                    className="bg-[var(--primary)] text-white px-6 py-2 rounded-lg font-semibold hover:bg-[var(--primary-hover)] disabled:opacity-60"
                 >
-                  Salvează
+                    {saving ? 'Se salvează...' : 'Salvează'}
                 </button>
                 <button
                   onClick={() => {
@@ -121,10 +160,8 @@ export default function AdminAnunturiEvenimente() {
           <div className="mb-6">
             <button
               onClick={() => {
-                const newId = Date.now().toString();
-                setEditingId(newId);
+                setEditingId('new');
                 setFormData({
-                  id: newId,
                   titlu: '',
                   data: new Date().toISOString().split('T')[0],
                   ora: '',
@@ -146,12 +183,18 @@ export default function AdminAnunturiEvenimente() {
               key={anunt.id}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="glass-card p-6"
+              className="glass-card p-6 border border-[var(--glass-border)] glass-hover"
             >
               <div className="flex justify-between items-start">
                 <div>
                   <h3 className="text-xl font-bold text-[var(--text-primary)]">{anunt.titlu}</h3>
-                  <p className="text-[var(--text-secondary)] mt-2">{anunt.descriere}</p>
+                  <p className="text-[var(--text-secondary)] mt-2 whitespace-pre-line">{anunt.descriere}</p>
+                  <div className="flex flex-wrap gap-3 text-xs text-[var(--text-secondary)] mt-3">
+                    {anunt.data && <span className="px-3 py-1 rounded-full bg-white/5 border border-[var(--glass-border)]">📅 {new Date(anunt.data).toLocaleDateString('ro-RO')}</span>}
+                    {anunt.ora && <span className="px-3 py-1 rounded-full bg-white/5 border border-[var(--glass-border)]">🕑 {anunt.ora}</span>}
+                    {anunt.locatie && <span className="px-3 py-1 rounded-full bg-white/5 border border-[var(--glass-border)]">📍 {anunt.locatie}</span>}
+                    {anunt.status && <span className="px-3 py-1 rounded-full bg-white/5 border border-[var(--glass-border)]">✅ {anunt.status}</span>}
+                  </div>
                 </div>
                 <button
                   onClick={() => {

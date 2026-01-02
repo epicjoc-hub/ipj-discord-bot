@@ -34,6 +34,18 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const data = await request.json();
+    const { nume, prenume, discordTag, telefon, tipTest } = data || {};
+
+    if (!nume || !prenume || !discordTag || !telefon || !tipTest) {
+      return NextResponse.json({ error: 'Toate câmpurile sunt obligatorii' }, { status: 400 });
+    }
+
+    const payload = {
+      ...data,
+      discordTag: typeof discordTag === 'string' ? discordTag.trim() : discordTag,
+      status: 'pending',
+      dataCreare: new Date().toISOString(),
+    };
     const botApiUrl = process.env.BOT_API_URL;
     const verifySecret = process.env.VERIFY_SECRET;
 
@@ -48,7 +60,7 @@ export async function POST(request: Request) {
         'Content-Type': 'application/json',
         'x-verify-secret': verifySecret,
       },
-      body: JSON.stringify(data),
+      body: JSON.stringify(payload),
     });
 
     if (!response.ok) {

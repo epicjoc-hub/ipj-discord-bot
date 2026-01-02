@@ -1,6 +1,7 @@
 const { Client, GatewayIntentBits, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, SlashCommandBuilder, REST, Routes } = require('discord.js');
 const config = require('./config');
 const buttonHandler = require('./handlers/buttonHandler');
+const storage = require('./utils/storage');
 
 const client = new Client({
   intents: [
@@ -56,10 +57,61 @@ client.login(config.BOT_TOKEN);
 
 // --- Minimal HTTP endpoint for token verification (used by the site)
 const express = require('express');
-const storage = require('./utils/storage');
 
 const app = express();
 app.use(express.json());
+
+async function findMemberByTag(discordTag) {
+  if (!discordTag || typeof discordTag !== 'string') return null;
+
+  try {
+    const guild = await client.guilds.fetch(config.GUILD_ID);
+    const [usernamePart, discriminator] = discordTag.split('#');
+    const query = usernamePart?.trim();
+
+    if (!query) return null;
+
+    const members = await guild.members.fetch({ query, limit: 10 });
+    const normalized = discordTag.toLowerCase();
+
+    const match = members.find((member) => {
+      const hasDiscriminator = member.user.discriminator && member.user.discriminator !== '0';
+      const tag = hasDiscriminator
+        ? `${member.user.username}#${member.user.discriminator}`.toLowerCase()
+        : member.user.username.toLowerCase();
+
+      if (hasDiscriminator && discriminator) {
+        return tag === normalized;
+      }
+
+      // Fallback: exact username match for discriminator-less accounts
+      return member.user.username.toLowerCase() === normalized;
+    });
+
+    return match || null;
+  } catch (error) {
+    console.error('Error searching member by tag:', error);
+    return null;
+  }
+}
+
+async function sendDiscordDm(discordTag, message) {
+  const member = await findMemberByTag(discordTag);
+
+  if (!member) {
+    const error = new Error('Utilizatorul nu a fost găsit după Discord Tag');
+    error.code = 'member_not_found';
+    throw error;
+  }
+
+  try {
+    await member.send(message);
+    return { success: true, memberId: member.user.id };
+  } catch (error) {
+    console.error('Error sending DM:', error);
+    throw error;
+  }
+}
 
 // Basic health check
 app.get('/health', (req, res) => {
@@ -162,7 +214,16 @@ app.post('/programari-teste', (req, res) => {
   if (!expectedSecret || req.header('x-verify-secret') !== expectedSecret) {
     return res.status(403).json({ ok: false, error: 'forbidden' });
   }
-  const programare = storage.addProgramare(req.body);
+  const { nume, prenume, discordTag, telefon, tipTest } = req.body || {};
+
+  if (!nume || !prenume || !discordTag || !telefon || !tipTest) {
+    return res.status(400).json({ ok: false, error: 'missing_fields' });
+  }
+
+  const programare = storage.addProgramare({
+    ...req.body,
+    discordTag: typeof discordTag === 'string' ? discordTag.trim() : discordTag,
+  });
   return res.json({ success: true, programare });
 });
 
@@ -213,6 +274,71 @@ app.delete('/anunturi-evenimente/:id', (req, res) => {
   const success = storage.deleteAnunt(req.params.id);
   if (!success) return res.status(404).json({ ok: false, error: 'not_found' });
   return res.json({ success: true });
+});
+
+// Anunturi Poliție endpoints
+app.get('/anunturi-politie', (req, res) => {
+  const expectedSecret = process.env.VERIFY_SECRET;
+  if (!expectedSecret || req.header('x-verify-secret') !== expectedSecret) {
+    return res.status(403).json({ ok: false, error: 'forbidden' });
+  }
+  const anunturi = storage.readAnunturiPolitie();
+  return res.json(anunturi);
+});
+
+app.post('/anunturi-politie', (req, res) => {
+  const expectedSecret = process.env.VERIFY_SECRET;
+  if (!expectedSecret || req.header('x-verify-secret') !== expectedSecret) {
+    return res.status(403).json({ ok: false, error: 'forbidden' });
+  }
+  const anunt = storage.addAnuntPolitie(req.body);
+  return res.json({ success: true, anunt });
+});
+
+app.put('/anunturi-politie/:id', (req, res) => {
+  const expectedSecret = process.env.VERIFY_SECRET;
+  if (!expectedSecret || req.header('x-verify-secret') !== expectedSecret) {
+    return res.status(403).json({ ok: false, error: 'forbidden' });
+  }
+  const anunt = storage.updateAnuntPolitie(req.params.id, req.body);
+  if (!anunt) return res.status(404).json({ ok: false, error: 'not_found' });
+  return res.json({ success: true, anunt });
+});
+
+app.delete('/anunturi-politie/:id', (req, res) => {
+  const expectedSecret = process.env.VERIFY_SECRET;
+  if (!expectedSecret || req.header('x-verify-secret') !== expectedSecret) {
+    return res.status(403).json({ ok: false, error: 'forbidden' });
+  }
+  const success = storage.deleteAnuntPolitie(req.params.id);
+  if (!success) return res.status(404).json({ ok: false, error: 'not_found' });
+  return res.json({ success: true });
+});
+
+// Discord DM notifications (used for "Trimite mail" via bot)
+app.post('/notify/discord', async (req, res) => {
+  const expectedSecret = process.env.VERIFY_SECRET;
+  if (!expectedSecret || req.header('x-verify-secret') !== expectedSecret) {
+    return res.status(403).json({ ok: false, error: 'forbidden' });
+  }
+
+  const { discordTag, message } = req.body || {};
+
+  if (!discordTag || !message) {
+    return res.status(400).json({ ok: false, error: 'missing_fields' });
+  }
+
+  try {
+    const result = await sendDiscordDm(discordTag, message);
+    return res.json({ ok: true, ...result });
+  } catch (error) {
+    if (error.code === 'member_not_found') {
+      return res.status(404).json({ ok: false, error: 'member_not_found' });
+    }
+
+    console.error('Failed to send Discord DM:', error);
+    return res.status(500).json({ ok: false, error: 'dm_failed', details: error.message });
+  }
 });
 
 const port = process.env.PORT || 3000;
