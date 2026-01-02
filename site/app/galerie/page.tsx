@@ -11,8 +11,8 @@ export default function GaleriePage() {
     <div className="py-12">
       <div className="container mx-auto px-4">
         <div className="mb-12 text-center">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">Galerie</h1>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+          <h1 className="text-4xl font-bold text-[var(--text-primary)] mb-4">Galerie</h1>
+          <p className="text-lg text-[var(--text-secondary)] max-w-2xl mx-auto">
             Descoperiți momente din activitățile și evenimentele organizate de Inspectoratul de Poliție Județean Los Santos.
           </p>
         </div>
@@ -21,7 +21,7 @@ export default function GaleriePage() {
 
         {galleryData.length === 0 && (
           <div className="text-center py-12">
-            <p className="text-gray-500 text-lg">Nu există imagini în galerie momentan.</p>
+            <p className="text-[var(--text-secondary)] text-lg">Nu există imagini în galerie momentan.</p>
           </div>
         )}
       </div>

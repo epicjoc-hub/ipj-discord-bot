@@ -163,10 +163,10 @@ export default function AdminAnunturiPolitie() {
                   <span
                     className={`px-3 py-1 rounded-full text-xs font-semibold mb-2 inline-block ${
                       anunt.categorie === 'Urgente'
-                        ? 'bg-red-100 text-red-800'
+                        ? 'bg-[var(--accent-warning)]/20 text-[var(--accent-warning)]'
                         : anunt.categorie === 'Comunicate'
-                          ? 'bg-blue-100 text-blue-800'
-                          : 'bg-green-100 text-green-800'
+                          ? 'bg-[var(--primary)]/20 text-[var(--primary)]'
+                          : 'bg-[var(--text-secondary)]/15 text-[var(--text-secondary)]'
                     }`}
                   >
                     {anunt.categorie}

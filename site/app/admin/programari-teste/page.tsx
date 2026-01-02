@@ -86,15 +86,16 @@ export default function AdminProgramariTeste() {
 
   return (
     <div className="min-h-screen bg-[var(--background)]">
-      <header className="bg-[var(--primary)] text-white shadow-lg">
+      <header className="glass-navbar sticky top-0 z-40">
         <div className="container mx-auto px-4 py-4">
           <div className="flex justify-between items-center">
             <div>
-              <h1 className="text-2xl font-bold">Programări Teste</h1>
+              <h1 className="text-2xl font-bold text-[var(--text-primary)]">Programări Teste</h1>
+              <p className="text-sm text-[var(--text-secondary)]">Administrare programări (dark-only)</p>
             </div>
             <Link
               href="/admin/dashboard"
-              className="bg-[var(--accent)] text-[var(--primary)] px-4 py-2 rounded-lg font-semibold hover:bg-[var(--accent-hover)] transition-colors"
+              className="glass-card px-4 py-2 rounded-[var(--radius-md)] font-semibold hover:bg-[var(--glass-bg-hover)] transition-colors"
             >
               ← Dashboard
             </Link>
@@ -185,11 +186,11 @@ export default function AdminProgramariTeste() {
                       </p>
                     </div>
                   </div>
-                  <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-xs font-semibold">
+                  <span className="bg-[var(--primary)]/20 text-[var(--primary)] px-3 py-1 rounded-full text-xs font-semibold">
                     Programat
                   </span>
                 </div>
-                <div className="mt-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                <div className="mt-4 p-4 bg-[var(--hover-bg)] rounded-[var(--radius-md)] border border-[var(--glass-border)]">
                   <div className="flex justify-between items-center mb-2">
                     <h4 className="font-semibold text-[var(--text-primary)]">📧 Model E-mail</h4>
                     <button
@@ -225,12 +226,12 @@ Biroul Relații Publice
                         navigator.clipboard.writeText(emailContent);
                         alert('Email copiat în clipboard!');
                       }}
-                      className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 font-semibold text-sm"
+                      className="bg-[var(--primary)] text-white px-4 py-2 rounded-[var(--radius-md)] hover:bg-[var(--primary-hover)] font-semibold text-sm"
                     >
                       📋 Copiază Email
                     </button>
                   </div>
-                  <pre className="text-xs bg-white dark:bg-gray-900 p-3 rounded border border-gray-200 dark:border-gray-700 overflow-x-auto whitespace-pre-wrap">
+                  <pre className="text-xs bg-[var(--glass-bg)] p-3 rounded-[var(--radius-md)] border border-[var(--glass-border)] overflow-x-auto whitespace-pre-wrap">
 {`📧 MODEL E-MAIL
 
 📤 Expeditor: relatiipublice@ipjbz.ro

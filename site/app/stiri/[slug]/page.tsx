@@ -33,21 +33,21 @@ export default function NewsDetailPage({ params }: PageProps) {
       <div className="container mx-auto px-4 max-w-4xl">
         <Link
           href="/stiri"
-          className="text-blue-900 hover:text-yellow-600 font-semibold mb-6 inline-block"
+          className="text-[var(--primary)] hover:text-[var(--primary-hover)] font-semibold mb-6 inline-block"
         >
           ← Înapoi la știri
         </Link>
 
-        <article>
+        <article className="glass-card p-6">
           <div className="mb-6">
-            <span className="bg-blue-900 text-white px-4 py-2 rounded text-sm font-semibold">
+            <span className="bg-[var(--primary)]/20 text-[var(--primary)] px-4 py-2 rounded-full text-sm font-semibold">
               {news.category}
             </span>
           </div>
 
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">{news.title}</h1>
+          <h1 className="text-4xl font-bold text-[var(--text-primary)] mb-4">{news.title}</h1>
 
-          <div className="text-gray-600 mb-8">
+          <div className="text-[var(--text-secondary)] mb-8">
             <p>
               {formattedDate} • {news.author}
             </p>
@@ -65,7 +65,7 @@ export default function NewsDetailPage({ params }: PageProps) {
           </div>
 
           <div className="prose prose-lg max-w-none">
-            <div className="text-gray-700 leading-relaxed whitespace-pre-line">
+            <div className="text-[var(--text-secondary)] leading-relaxed whitespace-pre-line">
               {news.content}
             </div>
           </div>

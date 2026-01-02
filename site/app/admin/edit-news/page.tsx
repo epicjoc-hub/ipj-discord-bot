@@ -80,16 +80,17 @@ export default function EditNews() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      <header className="bg-blue-900 text-white shadow-lg">
+    <div className="min-h-screen bg-[var(--background)] text-[var(--text-primary)]">
+      <header className="glass-navbar sticky top-0 z-40">
         <div className="container mx-auto px-4 py-4">
           <div className="flex justify-between items-center">
             <div>
-              <h1 className="text-2xl font-bold">Editare Știri</h1>
+              <h1 className="text-2xl font-bold text-[var(--text-primary)]">Editare Știri</h1>
+              <p className="text-sm text-[var(--text-secondary)]">Administrare conținut (fără a modifica funcționalități)</p>
             </div>
             <Link
               href="/admin/dashboard"
-              className="bg-yellow-400 text-blue-900 px-4 py-2 rounded-lg font-semibold hover:bg-yellow-300 transition-colors"
+              className="glass-card px-4 py-2 rounded-[var(--radius-md)] font-semibold hover:bg-[var(--glass-bg-hover)] transition-colors"
             >
               ← Dashboard
             </Link>
@@ -99,67 +100,67 @@ export default function EditNews() {
 
       <div className="container mx-auto px-4 py-8">
         {editingId ? (
-          <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-            <h2 className="text-2xl font-bold mb-4">Editează Știre</h2>
+          <div className="glass-card p-6 mb-6">
+            <h2 className="text-2xl font-bold mb-4 text-[var(--text-primary)]">Editează Știre</h2>
             <div className="space-y-4">
               <div>
-                <label className="block font-semibold mb-2">Titlu</label>
+                <label className="block font-semibold mb-2 text-[var(--text-primary)]">Titlu</label>
                 <input
                   type="text"
                   value={formData.title || ''}
                   onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                  className="w-full px-4 py-2 border rounded-lg"
+                  className="w-full px-4 py-2 rounded-[var(--radius-md)]"
                 />
               </div>
               <div>
-                <label className="block font-semibold mb-2">Data</label>
+                <label className="block font-semibold mb-2 text-[var(--text-primary)]">Data</label>
                 <input
                   type="date"
                   value={formData.date || ''}
                   onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-                  className="w-full px-4 py-2 border rounded-lg"
+                  className="w-full px-4 py-2 rounded-[var(--radius-md)]"
                 />
               </div>
               <div>
-                <label className="block font-semibold mb-2">Autor</label>
+                <label className="block font-semibold mb-2 text-[var(--text-primary)]">Autor</label>
                 <input
                   type="text"
                   value={formData.author || ''}
                   onChange={(e) => setFormData({ ...formData, author: e.target.value })}
-                  className="w-full px-4 py-2 border rounded-lg"
+                  className="w-full px-4 py-2 rounded-[var(--radius-md)]"
                 />
               </div>
               <div>
-                <label className="block font-semibold mb-2">Categorie</label>
+                <label className="block font-semibold mb-2 text-[var(--text-primary)]">Categorie</label>
                 <input
                   type="text"
                   value={formData.category || ''}
                   onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                  className="w-full px-4 py-2 border rounded-lg"
+                  className="w-full px-4 py-2 rounded-[var(--radius-md)]"
                 />
               </div>
               <div>
-                <label className="block font-semibold mb-2">Rezumat</label>
+                <label className="block font-semibold mb-2 text-[var(--text-primary)]">Rezumat</label>
                 <textarea
                   value={formData.excerpt || ''}
                   onChange={(e) => setFormData({ ...formData, excerpt: e.target.value })}
-                  className="w-full px-4 py-2 border rounded-lg"
+                  className="w-full px-4 py-2 rounded-[var(--radius-md)]"
                   rows={3}
                 />
               </div>
               <div>
-                <label className="block font-semibold mb-2">Conținut</label>
+                <label className="block font-semibold mb-2 text-[var(--text-primary)]">Conținut</label>
                 <textarea
                   value={formData.content || ''}
                   onChange={(e) => setFormData({ ...formData, content: e.target.value })}
-                  className="w-full px-4 py-2 border rounded-lg"
+                  className="w-full px-4 py-2 rounded-[var(--radius-md)]"
                   rows={10}
                 />
               </div>
               <div className="flex gap-4">
                 <button
                   onClick={handleSave}
-                  className="bg-blue-900 text-white px-6 py-2 rounded-lg font-semibold hover:bg-blue-800"
+                  className="px-6 py-2 rounded-[var(--radius-md)] font-semibold bg-[var(--primary)] text-white hover:bg-[var(--primary-hover)]"
                 >
                   Salvează
                 </button>
@@ -168,7 +169,7 @@ export default function EditNews() {
                     setEditingId(null);
                     setFormData({});
                   }}
-                  className="bg-gray-300 text-gray-700 px-6 py-2 rounded-lg font-semibold hover:bg-gray-400"
+                  className="px-6 py-2 rounded-[var(--radius-md)] font-semibold glass-card hover:bg-[var(--glass-bg-hover)]"
                 >
                   Anulează
                 </button>
@@ -193,7 +194,7 @@ export default function EditNews() {
                   image: '/images/news/default.jpg',
                 });
               }}
-              className="bg-green-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-green-700"
+              className="px-6 py-3 rounded-[var(--radius-md)] font-semibold bg-[var(--primary)] text-white hover:bg-[var(--primary-hover)]"
             >
               + Adaugă Știre Nouă
             </button>
@@ -202,25 +203,25 @@ export default function EditNews() {
 
         <div className="space-y-4">
           {news.map((item) => (
-            <div key={item.id} className="bg-white rounded-lg shadow-md p-6">
+            <div key={item.id} className="glass-card p-6">
               <div className="flex justify-between items-start">
                 <div className="flex-1">
-                  <h3 className="text-xl font-bold mb-2">{item.title}</h3>
-                  <p className="text-gray-600 mb-2">{item.excerpt}</p>
-                  <div className="text-sm text-gray-500">
+                  <h3 className="text-xl font-bold mb-2 text-[var(--text-primary)]">{item.title}</h3>
+                  <p className="text-[var(--text-secondary)] mb-2">{item.excerpt}</p>
+                  <div className="text-sm text-[var(--text-secondary)]">
                     {item.date} • {item.category}
                   </div>
                 </div>
                 <div className="flex gap-2">
                   <button
                     onClick={() => handleEdit(item)}
-                    className="bg-blue-900 text-white px-4 py-2 rounded-lg hover:bg-blue-800"
+                    className="px-4 py-2 rounded-[var(--radius-md)] bg-[var(--primary)] text-white hover:bg-[var(--primary-hover)]"
                   >
                     Editează
                   </button>
                   <button
                     onClick={() => handleDelete(item.id)}
-                    className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700"
+                    className="px-4 py-2 rounded-[var(--radius-md)] bg-[var(--accent)] text-white hover:bg-[var(--accent-hover)]"
                   >
                     Șterge
                   </button>

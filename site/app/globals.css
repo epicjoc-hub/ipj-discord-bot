@@ -1,49 +1,48 @@
 @import "tailwindcss";
 
 :root {
-  /* Light Theme - Glassmorphism Guvernamental */
-  --background: #f0f4f8;
-  --background-secondary: #e2e8f0;
-  --foreground: #0f172a;
-  --glass-bg: rgba(255, 255, 255, 0.7);
-  --glass-bg-hover: rgba(255, 255, 255, 0.85);
-  --glass-border: rgba(255, 255, 255, 0.3);
-  --card-bg: rgba(255, 255, 255, 0.8);
-  --card-border: rgba(255, 255, 255, 0.4);
-  --primary: #1e3a8a;
-  --primary-hover: #1e40af;
-  --accent: #dc2626;
-  --accent-hover: #b91c1c;
-  --accent-warning: #dc2626;
-  --text-primary: #0f172a;
-  --text-secondary: #475569;
-  --border: rgba(148, 163, 184, 0.2);
-  --hover-bg: rgba(255, 255, 255, 0.5);
-  --shadow-glass: 0 8px 32px rgba(0, 0, 0, 0.1);
-  --shadow-glass-hover: 0 12px 40px rgba(0, 0, 0, 0.15);
+  /* Dark-only theme (Windows 11 inspired: acrylic, soft depth, generous radius) */
+  --background: #0b0f16;
+  --background-secondary: #0f1622;
+  --foreground: #eaf0ff;
+
+  /* Acrylic surfaces */
+  --glass-bg: rgba(255, 255, 255, 0.06);
+  --glass-bg-hover: rgba(255, 255, 255, 0.085);
+  --glass-border: rgba(255, 255, 255, 0.10);
+  --card-bg: rgba(255, 255, 255, 0.055);
+  --card-border: rgba(255, 255, 255, 0.12);
+
+  /* Windows blue accent */
+  --primary: #0078d4;
+  --primary-hover: #1a86da;
+
+  /* Soft alert accents (kept non-aggressive) */
+  --accent: #ff5a7a;
+  --accent-hover: #ff3d63;
+  --accent-warning: #ff8a3d;
+
+  /* Text */
+  --text-primary: #eef2ff;
+  --text-secondary: rgba(238, 242, 255, 0.70);
+
+  /* Lines & interactions */
+  --border: rgba(255, 255, 255, 0.10);
+  --hover-bg: rgba(255, 255, 255, 0.06);
+
+  /* Shape & shadows */
+  --radius-lg: 16px;
+  --radius-md: 12px;
+  --radius-sm: 10px;
+  --shadow-glass: 0 16px 50px rgba(0, 0, 0, 0.45);
+  --shadow-glass-hover: 0 22px 70px rgba(0, 0, 0, 0.55);
+
+  /* Focus glow */
+  --focus-ring: rgba(0, 120, 212, 0.55);
 }
 
 [data-theme="dark"] {
-  /* Dark Theme - Glassmorphism Guvernamental */
-  --background: #0a0f1a;
-  --background-secondary: #1e293b;
-  --foreground: #f1f5f9;
-  --glass-bg: rgba(30, 41, 59, 0.6);
-  --glass-bg-hover: rgba(30, 41, 59, 0.75);
-  --glass-border: rgba(255, 255, 255, 0.1);
-  --card-bg: rgba(30, 41, 59, 0.7);
-  --card-border: rgba(255, 255, 255, 0.15);
-  --primary: #3b82f6;
-  --primary-hover: #2563eb;
-  --accent: #ef4444;
-  --accent-hover: #dc2626;
-  --accent-warning: #ef4444;
-  --text-primary: #f1f5f9;
-  --text-secondary: #94a3b8;
-  --border: rgba(148, 163, 184, 0.1);
-  --hover-bg: rgba(30, 41, 59, 0.5);
-  --shadow-glass: 0 8px 32px rgba(0, 0, 0, 0.3);
-  --shadow-glass-hover: 0 12px 40px rgba(0, 0, 0, 0.4);
+  /* Keep for compatibility; dark is the only supported theme. */
 }
 
 body {
@@ -64,10 +63,11 @@ body {
 /* Glassmorphism Utility Classes */
 .glass {
   background: var(--glass-bg);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(22px) saturate(160%);
+  -webkit-backdrop-filter: blur(22px) saturate(160%);
   border: 1px solid var(--glass-border);
   box-shadow: var(--shadow-glass);
+  border-radius: var(--radius-lg);
 }
 
 .glass-hover {
@@ -82,11 +82,11 @@ body {
 
 .glass-card {
   background: var(--card-bg);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(22px) saturate(160%);
+  -webkit-backdrop-filter: blur(22px) saturate(160%);
   border: 1px solid var(--card-border);
   box-shadow: var(--shadow-glass);
-  border-radius: 12px;
+  border-radius: var(--radius-lg);
   transition: all 0.3s ease;
 }
 
@@ -98,23 +98,23 @@ body {
 
 .glass-navbar {
   background: var(--glass-bg);
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  backdrop-filter: blur(26px) saturate(170%);
+  -webkit-backdrop-filter: blur(26px) saturate(170%);
   border-bottom: 1px solid var(--glass-border);
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.35);
 }
 
 .glass-footer {
   background: var(--glass-bg);
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  backdrop-filter: blur(26px) saturate(170%);
+  -webkit-backdrop-filter: blur(26px) saturate(170%);
   border-top: 1px solid var(--glass-border);
 }
 
-/* Typography - Guvernamental */
+/* Typography (Windows-like) */
 h1, h2, h3, h4, h5, h6 {
-  font-family: 'Georgia', 'Times New Roman', serif;
-  font-weight: 700;
+  font-family: var(--font-roboto), system-ui, -apple-system, sans-serif;
+  font-weight: 800;
   letter-spacing: -0.02em;
   color: var(--text-primary);
 }
@@ -141,6 +141,39 @@ body, p, span, div, a, button, input, textarea, select {
 /* Smooth transitions */
 * {
   transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Buttons & inputs (global primitives) */
+button, a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--focus-ring);
+}
+
+input,
+textarea,
+select {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  color: var(--text-primary);
+  border-radius: var(--radius-md);
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: rgba(238, 242, 255, 0.50);
+}
+
+/* Subtle selection */
+::selection {
+  background: rgba(0, 120, 212, 0.35);
 }
 
 /* React DatePicker Styles */

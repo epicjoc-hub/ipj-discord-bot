@@ -74,15 +74,16 @@ export default function AdminCereriEvenimente() {
 
   return (
     <div className="min-h-screen bg-[var(--background)]">
-      <header className="bg-[var(--primary)] text-white shadow-lg">
+      <header className="glass-navbar sticky top-0 z-40">
         <div className="container mx-auto px-4 py-4">
           <div className="flex justify-between items-center">
             <div>
-              <h1 className="text-2xl font-bold">Cereri Evenimente</h1>
+              <h1 className="text-2xl font-bold text-[var(--text-primary)]">Cereri Evenimente</h1>
+              <p className="text-sm text-[var(--text-secondary)]">Administrare cereri (dark-only)</p>
             </div>
             <Link
               href="/admin/dashboard"
-              className="bg-[var(--accent)] text-[var(--primary)] px-4 py-2 rounded-lg font-semibold hover:bg-[var(--accent-hover)] transition-colors"
+              className="glass-card px-4 py-2 rounded-[var(--radius-md)] font-semibold hover:bg-[var(--glass-bg-hover)] transition-colors"
             >
               ← Dashboard
             </Link>
@@ -124,12 +125,12 @@ export default function AdminCereriEvenimente() {
                         <strong>Participanți:</strong> ~{cerere.numarParticipanti}
                       </p>
                       {cerere.asistentaMedicala && (
-                        <span className="inline-block bg-red-100 text-red-800 px-2 py-1 rounded text-xs mr-2">
+                        <span className="inline-block bg-[var(--accent-warning)]/20 text-[var(--accent-warning)] px-2 py-1 rounded-full text-xs mr-2">
                           Asistență Medicală
                         </span>
                       )}
                       {cerere.organePolitie && (
-                        <span className="inline-block bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs">
+                        <span className="inline-block bg-[var(--primary)]/20 text-[var(--primary)] px-2 py-1 rounded-full text-xs">
                           Organe de Poliție
                         </span>
                       )}
@@ -141,7 +142,7 @@ export default function AdminCereriEvenimente() {
                         setSelectedCerere(cerere);
                         setActionModal('aprobare');
                       }}
-                      className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 font-semibold"
+                      className="bg-[var(--primary)] text-white px-4 py-2 rounded-[var(--radius-md)] hover:bg-[var(--primary-hover)] font-semibold"
                     >
                       Aprobă
                     </button>
@@ -150,7 +151,7 @@ export default function AdminCereriEvenimente() {
                         setSelectedCerere(cerere);
                         setActionModal('respingere');
                       }}
-                      className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 font-semibold"
+                      className="bg-[var(--accent)] text-white px-4 py-2 rounded-[var(--radius-md)] hover:bg-[var(--accent-hover)] font-semibold"
                     >
                       Respinge
                     </button>
@@ -186,8 +187,8 @@ export default function AdminCereriEvenimente() {
                       <span
                         className={`px-3 py-1 rounded-full text-xs font-semibold ${
                           cerere.status === 'approved'
-                            ? 'bg-green-100 text-green-800'
-                            : 'bg-red-100 text-red-800'
+                            ? 'bg-[var(--primary)]/20 text-[var(--primary)]'
+                            : 'bg-[var(--accent)]/20 text-[var(--accent)]'
                         }`}
                       >
                         {cerere.status === 'approved' ? 'Aprobat' : 'Respins'}
@@ -216,7 +217,7 @@ export default function AdminCereriEvenimente() {
                   </div>
                 )}
                 {cerere.status !== 'pending' && cerere.istoric && cerere.istoric.length > 0 && (
-                  <div className="mt-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                  <div className="mt-4 p-4 bg-[var(--hover-bg)] rounded-[var(--radius-md)] border border-[var(--glass-border)]">
                     <div className="flex justify-between items-center mb-2">
                       <h4 className="font-semibold text-[var(--text-primary)]">📧 Model E-mail</h4>
                       <button
@@ -248,12 +249,12 @@ Biroul Relații Publice
                           navigator.clipboard.writeText(emailContent);
                           alert('Email copiat în clipboard!');
                         }}
-                        className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 font-semibold text-sm"
+                        className="bg-[var(--primary)] text-white px-4 py-2 rounded-[var(--radius-md)] hover:bg-[var(--primary-hover)] font-semibold text-sm"
                       >
                         📋 Copiază Email
                       </button>
                     </div>
-                    <pre className="text-xs bg-white dark:bg-gray-900 p-3 rounded border border-gray-200 dark:border-gray-700 overflow-x-auto whitespace-pre-wrap">
+                    <pre className="text-xs bg-[var(--glass-bg)] p-3 rounded-[var(--radius-md)] border border-[var(--glass-border)] overflow-x-auto whitespace-pre-wrap">
 {`📧 MODEL E-MAIL
 
 📤 Expeditor: relatiipublice@ipjbz.ro
@@ -324,8 +325,8 @@ Biroul Relații Publice
                     disabled={!mesaj.trim()}
                     className={`flex-1 py-2 px-4 rounded-lg font-semibold ${
                       actionModal === 'aprobare'
-                        ? 'bg-green-600 text-white hover:bg-green-700'
-                        : 'bg-red-600 text-white hover:bg-red-700'
+                        ? 'bg-[var(--primary)] text-white hover:bg-[var(--primary-hover)]'
+                        : 'bg-[var(--accent)] text-white hover:bg-[var(--accent-hover)]'
                     } disabled:opacity-50`}
                   >
                     Confirmă

@@ -55,14 +55,17 @@ export default function EditFAQ() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      <header className="bg-blue-900 text-white shadow-lg">
+    <div className="min-h-screen bg-[var(--background)] text-[var(--text-primary)]">
+      <header className="glass-navbar sticky top-0 z-40">
         <div className="container mx-auto px-4 py-4">
           <div className="flex justify-between items-center">
-            <h1 className="text-2xl font-bold">Editare FAQ</h1>
+            <div>
+              <h1 className="text-2xl font-bold">Editare FAQ</h1>
+              <p className="text-sm text-[var(--text-secondary)]">Administrare conținut (fără a modifica funcționalități)</p>
+            </div>
             <Link
               href="/admin/dashboard"
-              className="bg-yellow-400 text-blue-900 px-4 py-2 rounded-lg font-semibold hover:bg-yellow-300"
+              className="glass-card px-4 py-2 rounded-[var(--radius-md)] font-semibold hover:bg-[var(--glass-bg-hover)]"
             >
               ← Dashboard
             </Link>
@@ -72,7 +75,7 @@ export default function EditFAQ() {
 
       <div className="container mx-auto px-4 py-8">
         {editingId ? (
-          <div className="bg-white rounded-lg shadow-md p-6 mb-6">
+          <div className="glass-card p-6 mb-6">
             <h2 className="text-2xl font-bold mb-4">Editează Întrebare</h2>
             <div className="space-y-4">
               <div>
@@ -81,7 +84,7 @@ export default function EditFAQ() {
                   type="text"
                   value={formData.category || ''}
                   onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                  className="w-full px-4 py-2 border rounded-lg"
+                  className="w-full px-4 py-2 rounded-[var(--radius-md)]"
                 />
               </div>
               <div>
@@ -90,7 +93,7 @@ export default function EditFAQ() {
                   type="text"
                   value={formData.question || ''}
                   onChange={(e) => setFormData({ ...formData, question: e.target.value })}
-                  className="w-full px-4 py-2 border rounded-lg"
+                  className="w-full px-4 py-2 rounded-[var(--radius-md)]"
                 />
               </div>
               <div>
@@ -98,14 +101,14 @@ export default function EditFAQ() {
                 <textarea
                   value={formData.answer || ''}
                   onChange={(e) => setFormData({ ...formData, answer: e.target.value })}
-                  className="w-full px-4 py-2 border rounded-lg"
+                  className="w-full px-4 py-2 rounded-[var(--radius-md)]"
                   rows={6}
                 />
               </div>
               <div className="flex gap-4">
                 <button
                   onClick={handleSave}
-                  className="bg-blue-900 text-white px-6 py-2 rounded-lg font-semibold hover:bg-blue-800"
+                  className="px-6 py-2 rounded-[var(--radius-md)] font-semibold bg-[var(--primary)] text-white hover:bg-[var(--primary-hover)]"
                 >
                   Salvează
                 </button>
@@ -114,7 +117,7 @@ export default function EditFAQ() {
                     setEditingId(null);
                     setFormData({});
                   }}
-                  className="bg-gray-300 text-gray-700 px-6 py-2 rounded-lg font-semibold"
+                  className="px-6 py-2 rounded-[var(--radius-md)] font-semibold glass-card hover:bg-[var(--glass-bg-hover)]"
                 >
                   Anulează
                 </button>
@@ -134,7 +137,7 @@ export default function EditFAQ() {
                   answer: '',
                 });
               }}
-              className="bg-green-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-green-700"
+              className="px-6 py-3 rounded-[var(--radius-md)] font-semibold bg-[var(--primary)] text-white hover:bg-[var(--primary-hover)]"
             >
               + Adaugă Întrebare Nouă
             </button>
@@ -143,27 +146,27 @@ export default function EditFAQ() {
 
         <div className="space-y-4">
           {faqs.map((faq) => (
-            <div key={faq.id} className="bg-white rounded-lg shadow-md p-6">
+            <div key={faq.id} className="glass-card p-6">
               <div className="mb-2">
-                <span className="bg-blue-100 text-blue-900 px-3 py-1 rounded text-sm font-semibold">
+                <span className="bg-[var(--primary)]/20 text-[var(--primary)] px-3 py-1 rounded-full text-sm font-semibold">
                   {faq.category}
                 </span>
               </div>
               <h3 className="text-xl font-bold mb-2">{faq.question}</h3>
-              <p className="text-gray-600 mb-4">{faq.answer}</p>
+              <p className="text-[var(--text-secondary)] mb-4">{faq.answer}</p>
               <div className="flex gap-2">
                 <button
                   onClick={() => {
                     setEditingId(faq.id);
                     setFormData(faq);
                   }}
-                  className="bg-blue-900 text-white px-4 py-2 rounded-lg hover:bg-blue-800"
+                  className="px-4 py-2 rounded-[var(--radius-md)] bg-[var(--primary)] text-white hover:bg-[var(--primary-hover)]"
                 >
                   Editează
                 </button>
                 <button
                   onClick={() => handleDelete(faq.id)}
-                  className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700"
+                  className="px-4 py-2 rounded-[var(--radius-md)] bg-[var(--accent)] text-white hover:bg-[var(--accent-hover)]"
                 >
                   Șterge
                 </button>
