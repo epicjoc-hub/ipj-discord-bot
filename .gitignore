@@ -14,3 +14,28 @@ Thumbs.db
 # Monorepo: bot and site have their own node_modules
 bot/node_modules/
 site/node_modules/
+
+# Root-level node_modules and packages (should be in bot/ or site/ only!)
+@discordjs/
+@sapphire/
+@types/
+@vladfrangu/
+node/
+dist/
+lib/
+src/
+
+# Specific discord.js and dependencies
+discord.js/
+discord-api-types/
+dotenv/
+undici/
+undici-types/
+lodash/
+lodash.snakecase/
+async-queue/
+async_event_emitter/
+fast-deep-equal/
+ts-mixer/
+tslib/
+ws/
