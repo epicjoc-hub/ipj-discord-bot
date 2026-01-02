@@ -57,7 +57,12 @@ export default function RootLayout({
         />
       </head>
       <body className={`${roboto.variable} font-sans antialiased`}>
-        <ThemeProvider attribute="data-theme" defaultTheme="light" enableSystem={false}>
+        <ThemeProvider
+          attribute="data-theme"
+          defaultTheme="dark"
+          forcedTheme="dark"
+          enableSystem={false}
+        >
           <div className="flex flex-col min-h-screen bg-[var(--background)] text-[var(--foreground)]">
             <Header />
             <main className="flex-grow">

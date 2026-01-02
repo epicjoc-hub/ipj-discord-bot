@@ -3,7 +3,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { useState } from 'react';
-import ThemeToggle from './ThemeToggle';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function Header() {
@@ -54,14 +53,10 @@ export default function Header() {
                 <span className="absolute bottom-1 left-1/2 transform -translate-x-1/2 w-0 h-0.5 bg-[var(--primary)] transition-all group-hover:w-3/4 rounded-full"></span>
               </Link>
             ))}
-            <div className="ml-4 pl-4 border-l border-[var(--glass-border)]">
-              <ThemeToggle />
-            </div>
           </nav>
 
           {/* Mobile Menu Button & Theme Toggle */}
-          <div className="lg:hidden flex items-center space-x-3">
-            <ThemeToggle />
+          <div className="lg:hidden flex items-center">
             <button
               className="p-2 text-[var(--text-primary)] hover:bg-[var(--hover-bg)] rounded-lg transition-colors"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
